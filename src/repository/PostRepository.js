@@ -1,8 +1,7 @@
-import { postStatus } from '../constants/const.js';
 import MongoInternalException from '../exceptions/MongoInternalException.js';
-import NotFoundException from '../exceptions/NotFoundException.js';
 import postSchema from "../schemas/postSchema.js";
-import userSchema from '../schemas/userSchema.js';
+import tagSchemas from "../schemas/tagSchema.js";
+
 
 class PostRepository {
     async add(content) {
@@ -12,73 +11,58 @@ class PostRepository {
         return res.toObject();
     }
 
-    async getById(id, userId) {
-        const res = await postSchema.findOne({ _id: id, ownerId: userId }).catch((err) => {
-            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-        });
-        if (!res) {
-            throw new NotFoundException(`error: post ${id} not found`)
-        }
-        return res.toObject();
-    }
+    async tag(listTag) {
+        try {
+            // 1. trova i tag esistenti
+            const existing = await tagSchemas.find({
+                nameTag: { $in: listTag }
+            });
 
-    async update(id, params, userId) {
-        const res = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId }, params, { new: true }).catch((err) => {
-            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-        });
-        return res ? res.toObject() : null;
-    }
+            const existingContents = existing.map(t => t.nameTag);
 
-    async getManyByUserId(userId, status) {
-        const query = {
-            ownerId: userId
-        }
-        if (status) {
-            query.status = status;
-        }
-        const res = await postSchema.find(query).catch(err => {
-            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-        })
-        return res.map((item) => item.toObject());
-    }
-    
-    async getIdsStatusOpen() {
-        const res = await postSchema.find({ status: postStatus.OPEN }).catch(err => {
-            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-        })
-        return res.map((item) => item.toObject());
-    }
-    async getManyByIds(ids) {
-        const query = {
-            _id: { $in: ids },
-            status: postStatus.OPEN
-        };
-        const res = await postSchema.find(query);
-        return res.map(item => item.toObject());
-    }
+            // 2. crea solo quelli mancanti
+            const toCreate = listTag.filter(tag => !existingContents.includes(tag)).map(tag => ({ nameTag: tag }));
 
+            if (toCreate.length) {
+                await tagSchemas.insertMany(toCreate, { ordered: false });
+            }
 
-    async complete(id, userId) {
-        const res = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId, status: { $in: [postStatus.OPEN, postStatus.COMPLETED] } }, { status: postStatus.COMPLETED }, { new: true });
-        if (!res) {
-            throw new NotFoundException('post not found');
+            // 3. ritorna TUTTI i tag
+            return tagSchemas.find({
+                nameTag: { $in: listTag }
+            });
+
+        } catch (err) {
+            throw new MongoInternalException(
+                `something went wrong: ${err.message}`,
+                err.code
+            );
         }
-        return res;
-    }
-    async open(id, userId) {
-        const res = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId, status: { $in: [postStatus.OPEN, postStatus.COMPLETED, postStatus.ARCHIVED] } }, { status: postStatus.OPEN }, { new: true });
-        if (!res) {
-            throw new NotFoundException('post not found');
-        }
-        return res;
-    }
-    async archived(id, userId) {
-        const res = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId, status: { $in: [postStatus.COMPLETED, postStatus.ARCHIVED] } }, { status: postStatus.ARCHIVED }, { new: true });
-        if (!res) {
-            throw new NotFoundException('post not found');
-        }
-        return res;
     }
 }
-
 export default new PostRepository();
+
+
+
+/*  async tag(listTag) {
+        const result = [];
+        console.log(listTag, "postRepo");
+        try {
+            for (const content of listTag) {
+                console.log(content);
+                let res = await tagSchemas.findOne({ content });
+                if (!res) {
+                    res = await tagSchemas.create({ content });
+                }
+                result.push(res.toObject());
+            } return result;
+
+        } catch (err) {
+            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
+        }
+
+    }
+
+}
+
+export default new PostRepository();*/

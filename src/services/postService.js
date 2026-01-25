@@ -9,11 +9,7 @@ export const addPost = async (content, userId) => {
     });
 }
 
-export class TagCreate {
-
-    async tagCreate(val) {
-        const tag = await postRepository.getTag(val);
-
-    }
+export const tagCreate = async (content) => {
+    return postRepo.tag(content);
 
 }

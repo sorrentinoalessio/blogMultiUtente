@@ -8,8 +8,9 @@ const postSchemas = new mongoose.Schema(
         description: String,
         status: { type: String, default: postStatus.DRAFT },
         creationDate: { type: Date, default: Date.now },
-        tag: {type: [String], default:[]},
+        tag: [String],
         img: String
+        
     },
     {
         timestamps: true
