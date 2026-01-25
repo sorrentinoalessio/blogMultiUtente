@@ -11,7 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    env:
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -47,6 +49,8 @@ jobs:
             export MONGODB_URI="${{ secrets.MONGODB_URI }}"
             export MAIL_USER="${{ secrets.MAIL_USER }}"
             export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
+            export PRIVATE_KEY="${{ secrets.PRIVATE_KEY }}"
+            export PUBLIC_KEY="${{ secrets.PUBLIC_KEY }}"
 
             # Vai nella cartella del progetto
             cd /home/ubuntu/blog/
