@@ -53,7 +53,7 @@ jobs:
             export PUBLIC_KEY="${{ secrets.PUBLIC_KEY }}"
 
             # Vai nella cartella del progetto
-            cd /home/ubuntu/blog/
+            cd /home/ubuntu/blog/blogMultiUtente
 
             # Aggiorna il codice
             git checkout main
