@@ -49,7 +49,7 @@ jobs:
             export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
 
             # Vai nella cartella del progetto
-            cd /home/ubuntu/todolist/
+            cd /home/ubuntu/blog/
 
             # Aggiorna il codice
             git checkout main
