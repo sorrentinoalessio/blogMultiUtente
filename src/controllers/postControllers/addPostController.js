@@ -7,7 +7,6 @@ export const add = async (req, res) => {
     if (content.tag) {
         tags = content.tag.map(tag => tag.toLowerCase());
         const tagsRepo = await tagCreate(tags);
-          console.log(tagsRepo,"sempre vuoto");
         content.tag = tagsRepo.map(t => t.nameTag);
     } 
     

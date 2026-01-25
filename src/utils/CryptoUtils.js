@@ -18,7 +18,7 @@ class CryptoUtils {
     return crypto.createHmac('sha256', key).update(value).digest('hex')
   }
   generateToken(user, expiration) {
-    //console.log(user);
+
     return jwt.sign({
       userId: user._id.toString(),
       name: user.name,

@@ -46,10 +46,9 @@ export default new PostRepository();
 
 /*  async tag(listTag) {
         const result = [];
-        console.log(listTag, "postRepo");
         try {
             for (const content of listTag) {
-                console.log(content);
+
                 let res = await tagSchemas.findOne({ content });
                 if (!res) {
                     res = await tagSchemas.create({ content });

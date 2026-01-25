@@ -12,11 +12,9 @@ export default async (req, res, next) => {
         if(!jwtDecoded) {
             return res.status(401).send('Unauthorized 2');
         }
-        //console.log(jwtDecoded);
         req.userId = jwtDecoded.userId;
         next();
     } catch(err) {
-        //console.log(err.message);
         return res.status(401).send('Unauthorized 3');
     }
 }
