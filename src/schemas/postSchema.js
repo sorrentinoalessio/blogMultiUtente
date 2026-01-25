@@ -4,10 +4,12 @@ import { postStatus } from '../constants/const.js';
 const postSchemas = new mongoose.Schema(
     {
         ownerId: { type: Schema.Types.ObjectId, default: null },
-        name: String,
+        title: String,
         description: String,
-        status: { type: String, default: postStatus.OPEN },
-        dueDate: { type: Date, default: new Date() }
+        status: { type: String, default: postStatus.DRAFT },
+        creationDate: { type: Date, default: Date.now },
+        tag: {type: [String], default:[]},
+        img: String
     },
     {
         timestamps: true

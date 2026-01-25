@@ -1,8 +1,8 @@
 import 'dotenv/config';
 export const postStatus = {
   DELETED: 'deleted',
-  OPEN: 'open',
-  COMPLETED: 'completed',
+  DRAFT: 'draft',
+  PUBLIC: 'public',
   ARCHIVED: 'archived'
 }
 
