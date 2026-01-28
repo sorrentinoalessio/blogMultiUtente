@@ -13,22 +13,20 @@ class PostRepository {
 
     async tag(listTag) {
         try {
-            // 1. trova i tag esistenti
-            const existing = await tagSchemas.find({
+            const tagExisting = await tagSchemas.find({ // cerca quelli che sono presenti nel database
                 nameTag: { $in: listTag }
             });
 
-            const existingContents = existing.map(t => t.nameTag);
-
+            const nameTags = tagExisting.map(t => t.nameTag);// estrai i nomi dei tag esistenti
             // 2. crea solo quelli mancanti
-            const toCreate = listTag.filter(tag => !existingContents.includes(tag)).map(tag => ({ nameTag: tag }));
+            const toCreate = listTag.filter(tag => !nameTags.includes(tag)).map(tag => ({ nameTag: tag }));//
 
             if (toCreate.length) {
                 await tagSchemas.insertMany(toCreate, { ordered: false });
             }
 
             // 3. ritorna TUTTI i tag
-            return tagSchemas.find({
+            return await tagSchemas.find({
                 nameTag: { $in: listTag }
             });
 

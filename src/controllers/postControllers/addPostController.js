@@ -9,7 +9,7 @@ export const add = async (req, res) => {
         const tagsRepo = await tagCreate(tags);
         content.tag = tagsRepo.map(t => t.nameTag);
     } 
-    
+     
     try {
         const post = await addPost(content, req.userId);
         res.status(201).json(post);
