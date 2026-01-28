@@ -28,7 +28,7 @@ class PostRepository {
             // 3. ritorna TUTTI i tag
             return await tagSchemas.find({
                 nameTag: { $in: listTag }
-            });
+                });
 
         } catch (err) {
             throw new MongoInternalException(
