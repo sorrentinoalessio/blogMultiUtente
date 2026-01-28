@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-const dbName = 'todolist-prod';
+const dbName = 'blog-MultiUtente'||'todolist-prod';
 const connectionString = process.env.MONGODB_URI || `mongodb://localhost:27017/${dbName}`;
 let mongoServer;
 
