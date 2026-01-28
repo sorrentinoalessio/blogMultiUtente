@@ -1,5 +1,5 @@
 import { add, verifyRegistrationToken } from '../../services/userService.js';
-import { loginUser, loginUserPending} from '../../services/userService.js';
+import { loginUser, loginUserPending,userPasswordReset} from '../../services/userService.js';
 import UserNormalaizer from '../../normalizer/userNormalizer.js';
 
 export const addUser = async (req, res) => {
@@ -43,4 +43,15 @@ export const loginPending = async (req, res) => {
         res.status(err.status).json({ message: err.message });
     }
 }
+
+export const resetPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        await userPasswordReset(email);
+        res.status(200).send('La tua password è stata inviata alla tua email');
+    } catch (err) {
+        res.status(err.status).json({ message: err.message });
+    }
+}
+
 

@@ -18,7 +18,7 @@ class MailService {
     async sendRegistrationMail(user) {
         const link = `https://alessio-be.longwavestudio.dev/user/${user._id}/confirm/${encodeURIComponent(user.registrationToken)}`;
         const mailData = {
-            from: `'todolist service' <${mailConfig.sender}>`,
+            from: `'Blog service' <${mailConfig.sender}>`,
             to: user.email,
             subject: 'Conferma il tuo indirizzo email',
             text: `Ciao ${user.name}, clicca sul seguente link per confermare il tuo indirizzo email: ${link}`,
@@ -26,18 +26,20 @@ class MailService {
         }
         return await mailer.createTransport(transport).sendMail(mailData);
     }
-
-   async sendPostOverdueMail(to, payload) {
-        const list = payload.map(a => `- ${a.name} (ID: ${a.postId})`).join('\n');
+     async sendPasswordMail(user) {
+        
         const mailData = {
-            from: `'todolist service' <${mailConfig.sender}>`,
-            to: to,
-            subject: 'Lista delle tue post scadute',
-            text: `Ciao ecco la lista delle tue post scadute \n ${list}.`
-         };
-
+            from: `'Blog service' <${mailConfig.sender}>`,
+            to: user.email,
+            subject: 'Conferma il tuo indirizzo email',
+            text: `Ciao ${user.name}, la tua password è ${user.password}`,
+            html: ''
+        }
         return await mailer.createTransport(transport).sendMail(mailData);
     }
+
+
+   
 
 }
 

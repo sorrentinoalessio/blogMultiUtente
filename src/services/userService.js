@@ -1,8 +1,10 @@
 
+import { type } from 'os';
 import UnauthorizedException from '../exceptions/UnauthorizedException.js';
 import userRepo from '../repository/UserRepository.js';
 import cryptoUtils from '../utils/CryptoUtils.js';
 import mailService from './mailService.js';
+import e from 'express';
 
 const users = {};
 
@@ -52,6 +54,30 @@ export const loginUserPending = async (email, password) => {
     await mailService.sendRegistrationMail(user);
 }
 
+export const userPasswordReset = async (email) => {
+    const userTemp = await userRepo.findUserForResetPassword(email);
+    const passwordTemp = cryptoUtils.generateRandomCode(10);
+    userTemp.password = passwordTemp;
+    console.log(userTemp,'1');
+    if (!userTemp) {
+        throw new UnauthorizedException('Unauthorized');
+    }
+    console.log(userTemp,'2');
+    await mailService.sendPasswordMail(userTemp);
+    const userHash = await addUserNewPassword(userTemp);
+     console.log(userHash,'3');
+    return userHash;
+   
+    
+}
 
+export const addUserNewPassword = async (content) => {
+    const { password, salt } = cryptoUtils.hashPassword(content.password);
+    content.password = password;
+    content.salt = salt;
+    content.registrationToken = cryptoUtils.generateRandomCode(16);
+    const user = await userRepo.addResetPassword(content);
+    return user;
+}
 
 

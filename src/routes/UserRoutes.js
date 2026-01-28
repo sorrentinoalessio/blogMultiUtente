@@ -1,7 +1,8 @@
-import { addUser, confirmRegistration, login, loginPending} from '../controllers/userControllers/userController.js';
+import { addUser, confirmRegistration, login, loginPending,resetPassword} from '../controllers/userControllers/userController.js';
 import { addUserValidator } from '../validators/addUserValidator.js';
 import { confirmRegistrationValidator } from '../validators/confirmRegistrationValidator.js';
 import { loginValidator } from '../validators/loginValidator.js';
+import { emailValidator } from '../validators/emailValidator.js';
 
 
 export class UserRoutes {
@@ -10,5 +11,6 @@ export class UserRoutes {
     router.get('/user/:id/confirm/:token', confirmRegistrationValidator, confirmRegistration);
     router.post('/user/login', loginValidator, login);
     router.post('/user/pending', loginValidator, loginPending);
+    router.post('/user/reset_password', emailValidator, resetPassword);
   }
 }

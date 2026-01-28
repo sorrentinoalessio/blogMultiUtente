@@ -4,6 +4,8 @@ import NotFoundException from "../exceptions/NotFoundException.js";
 import UnauthorizedException from "../exceptions/UnauthorizedException.js";
 import userSchema from "../schemas/userSchema.js";
 import MongoInternalException from '../exceptions/MongoInternalException.js';
+import CryptoUtils from "../utils/CryptoUtils.js";
+import { getRandomValues } from "crypto";
 
 class UserRepository {
     async add(content) {
@@ -61,6 +63,43 @@ class UserRepository {
             throw new DomainException('Generic error');
         }
     }
+
+    async findUserForResetPassword(email) {
+        try {
+            const user = await userSchema.findOne({ email: email });
+            if (!user) {
+                throw new UnauthorizedException('Unauthorized666');
+            }
+            console.log(user);
+            return user.toObject();
+        } catch (err) {
+            if (err instanceof UnauthorizedException) throw err;
+            throw new DomainException('Generic error');
+        }
+    }
+
+
+    async addResetPassword(content) {
+        const res = await userSchema.findOneAndUpdate({ email: email },
+            {
+                $set: {
+                    password: content.password,
+                    salt: content.salt,
+                    registrationToken: content.registrationToken
+                }
+
+            }
+        ).catch((err) => {
+                        if (err.code === 11000) {
+                            throw new MongoInternalException(`something went wrong`, 500);
+                        }
+                        throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
+
+                    });
+        return res.toObject();
+    }
+
+
 }
 
 export default new UserRepository();
