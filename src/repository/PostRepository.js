@@ -41,7 +41,7 @@ class PostRepository {
 
     async getTagsByPostId(id,userId) {
         const tags = await postSchema.findOne({_id: id, ownerId: userId});
-        return tags.tag;
+        return tags;
 }
 
  async getByPostsId(userId) {
