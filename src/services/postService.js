@@ -20,3 +20,8 @@ export const getPostById = async (id, userId) => {
 export const getPostsById = async (userId) => {
     return postRepo.getByPostsId(userId);
 }
+
+export const getPost = async (id, userId) => {
+    return postRepo.getPost(id, userId);
+}
+

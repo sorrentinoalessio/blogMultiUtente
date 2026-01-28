@@ -49,6 +49,11 @@ class PostRepository {
         return post;
 }
 
+ async getPost(id,userId) {
+        const post = await postSchema.findOne({_id: id, ownerId: userId});
+        return post;
+}
+
 }
 export default new PostRepository();
 

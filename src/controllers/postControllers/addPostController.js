@@ -1,5 +1,5 @@
 
-import { addPost, tagCreate, getPostsById } from '../../services/postService.js';
+import { addPost, tagCreate, getPostsById, getPost} from '../../services/postService.js';
 
 export const add = async (req, res) => {
     const content = req.body;
@@ -26,4 +26,14 @@ export const add = async (req, res) => {
             res.status(500).json({ message: err.message });
         }
     }
+       export const getPostByIdPostAndUserId = async (req, res) => {
+            const idPost = req.params.id;
+             try {
+                const post = await getPost(idPost, req.userId);
+                res.status(201).json(post);
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
+    }
+
 
