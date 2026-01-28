@@ -1,3 +1,4 @@
+import { postStatus } from '../constants/const.js';
 import MongoInternalException from '../exceptions/MongoInternalException.js';
 import postSchema from "../schemas/postSchema.js";
 import tagSchemas from "../schemas/tagSchema.js";
@@ -53,6 +54,12 @@ class PostRepository {
         const post = await postSchema.findOne({_id: id, ownerId: userId});
         return post;
 }
+
+async getPostsStatus() {
+        const post = await postSchema.find({status: postStatus.PUBLIC});
+        return post.map((item) => item.toObject());
+}
+
 
 }
 export default new PostRepository();
