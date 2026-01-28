@@ -43,6 +43,12 @@ class PostRepository {
         const tags = await postSchema.findOne({_id: id, ownerId: userId});
         return tags.tag;
 }
+
+ async getByPostsId(userId) {
+        const post = await postSchema.find({ownerId: userId});
+        return post;
+}
+
 }
 export default new PostRepository();
 

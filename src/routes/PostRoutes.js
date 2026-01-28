@@ -4,12 +4,14 @@ import checkAuthorizationMiddleware from '../middlewares/checkAuthorizationMiddl
 
 import { add } from '../controllers/postControllers/addPostController.js';
 import { getTag } from '../controllers/postControllers/tagPostController.js';
+import { getPosts} from '../controllers/postControllers/addPostController.js';
 
 
 
 export class PostRoutes {
   constructor(router) {
     router.post('/', checkAuthorizationMiddleware, postBodyValidator, add);
+    router.get('/user/post/',checkAuthorizationMiddleware,getPosts);
     router.get('/user/tag/:id',checkAuthorizationMiddleware, postIdParamValidator,getTag);
   }
 }

@@ -17,3 +17,7 @@ export const tagCreate = async (content) => {
 export const getPostById = async (id, userId) => {
     return postRepo.getTagsByPostId(id, userId);
 }
+
+export const getPostsById = async (userId) => {
+    return postRepo.getByPostsId(userId);
+}
