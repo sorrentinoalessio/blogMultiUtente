@@ -8,8 +8,8 @@ import MongoInternalException from '../exceptions/MongoInternalException.js';
 class UserRepository {
     async add(content) {
         const res = await userSchema.create(content).catch((err) => {
-            if(err.code === 11000){
-            throw new MongoInternalException(`something went wrong`, 500);
+            if (err.code === 11000) {
+                throw new MongoInternalException(`something went wrong`, 500);
             }
             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
 
@@ -44,23 +44,23 @@ class UserRepository {
         const res = await userSchema.find({ _id: ownerId }).catch(err => {
             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
         })
-        return res.map(({ _id, name, email }) => ({_id, name, email }));
+        return res.map(({ _id, name, email }) => ({ _id, name, email }));
 
     }
-    
-    
+
+
     async findPendingbyEmail(email) {
         try {
-                 const res = await userSchema.findOne({ email: email, status: userStatus.PENDING });
-             
-        if (!res) {
-            throw new UnauthorizedException('Unauthorized');
+            const userPending = await userSchema.findOne({ email: email, status: userStatus.PENDING });
+            if (!userPending) {
+                throw new UnauthorizedException('Unauthorized666');
+            }
+            return userPending.toObject();
+        } catch (err) {
+            if (err instanceof UnauthorizedException) throw err;
+            throw new DomainException('Generic error');
         }
-        return res.toObject();
-    }catch (err) {
-        if (err instanceof UnauthorizedException) throw err;
-        throw new DomainException('Generic error');
-    }}
+    }
 }
 
 export default new UserRepository();
