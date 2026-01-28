@@ -37,6 +37,12 @@ class PostRepository {
             );
         }
     }
+
+
+    async getTagsByPostId(id,userId) {
+        const tags = await postSchema.findOne({_id: id, ownerId: userId});
+        return tags.tag;
+}
 }
 export default new PostRepository();
 
