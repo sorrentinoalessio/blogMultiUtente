@@ -70,7 +70,6 @@ class UserRepository {
             if (!user) {
                 throw new UnauthorizedException('Unauthorized666');
             }
-            console.log(user);
             return user.toObject();
         } catch (err) {
             if (err instanceof UnauthorizedException) throw err;
