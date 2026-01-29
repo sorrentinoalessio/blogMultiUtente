@@ -80,7 +80,7 @@ class UserRepository {
 
 
     async addResetPassword(content) {
-        const res = await userSchema.findOneAndUpdate({ email: email },
+        const res = await userSchema.findOneAndUpdate({ email: content.email },
             {
                 $set: {
                     password: content.password,

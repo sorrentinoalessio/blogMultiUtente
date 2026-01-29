@@ -50,8 +50,9 @@ export const resetPassword = async (req, res) => {
         await userPasswordReset(email);
         res.status(200).send('La tua password è stata inviata alla tua email');
     } catch (err) {
-        res.status(err.status).json({ message: err.message });
-    }
+    res.status(err.status || 500).json({ message: err.message });
+}
+
 }
 
 
