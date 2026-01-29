@@ -31,8 +31,8 @@ class MailService {
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: user.email,
-            subject: 'Conferma il tuo indirizzo email',
-            text: `Ciao ${user.name}, la tua password è ${user.password}`,
+            subject: 'RESET PASSWORD',
+            text: `Ciao ${user.name}, la tua nuova password è stata generata in modo casuale ed è ${user.password} , appena effettui l'accesso modificala per una migliore sicurezza`,
             html: ''
         }
         return await mailer.createTransport(transport).sendMail(mailData);

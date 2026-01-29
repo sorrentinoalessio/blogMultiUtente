@@ -58,14 +58,12 @@ export const userPasswordReset = async (email) => {
     const userTemp = await userRepo.findUserForResetPassword(email);
     const passwordTemp = cryptoUtils.generateRandomCode(10);
     userTemp.password = passwordTemp;
-    console.log(userTemp,'1');
     if (!userTemp) {
         throw new UnauthorizedException('Unauthorized');
     }
     console.log(userTemp,'2');
     await mailService.sendPasswordMail(userTemp);
     const userHash = await addUserNewPassword(userTemp);
-     console.log(userHash,'3');
     return userHash;
    
     
@@ -75,7 +73,9 @@ export const addUserNewPassword = async (content) => {
     const { password, salt } = cryptoUtils.hashPassword(content.password);
     content.password = password;
     content.salt = salt;
-    content.registrationToken = cryptoUtils.generateRandomCode(16);
+    if(content.registrationToken != null){
+        content.registrationToken = cryptoUtils.generateRandomCode(16);
+    }
     const user = await userRepo.addResetPassword(content);
     return user;
 }
