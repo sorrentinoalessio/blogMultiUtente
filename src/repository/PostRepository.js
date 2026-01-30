@@ -29,7 +29,7 @@ class PostRepository {
             // 3. ritorna TUTTI i tag
             return await tagSchemas.find({
                 nameTag: { $in: listTag }
-                });
+            });
 
         } catch (err) {
             throw new MongoInternalException(
@@ -40,25 +40,33 @@ class PostRepository {
     }
 
 
-    async getTagsByPostId(id,userId) {
-        const tags = await postSchema.findOne({_id: id, ownerId: userId});
+    async getTagsByPostId(id, userId) {
+        const tags = await postSchema.findOne({ _id: id, ownerId: userId });
         return tags;
-}
+    }
 
- async getByPostsId(userId) {
-        const post = await postSchema.find({ownerId: userId});
+    async getByPostsId(userId) {
+        const post = await postSchema.find({ ownerId: userId });
         return post;
-}
+    }
 
- async getPost(id,userId) {
-        const post = await postSchema.findOne({_id: id, ownerId: userId});
+    async getPost(id, userId) {
+        const post = await postSchema.findOne({ _id: id, ownerId: userId });
         return post;
-}
+    }
 
-async getPostsStatus() {
-        const post = await postSchema.find({status: postStatus.PUBLIC});
+    async getPostsStatus() {
+        const post = await postSchema.find({ status: postStatus.PUBLIC });
         return post.map((item) => item.toObject());
-}
+    }
+
+
+    async patchPostStatus(id, userId, content) {
+        const post = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId },{ $set: { status: content.status } },{ new: true });
+        return post;
+    }
+
+
 
 
 }

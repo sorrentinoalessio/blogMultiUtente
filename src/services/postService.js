@@ -5,7 +5,7 @@ import postRepo from '../repository/PostRepository.js';
 export const addPost = async (content, userId) => {
     content.ownerId = userId;
     return await postRepo.add(content)
-    }
+}
 
 
 export const tagCreate = async (content) => {
@@ -29,4 +29,6 @@ export const getPostsPublic = async (status) => {
     return postRepo.getPostsStatus(status);
 }
 
-
+export const getPostStatusUpdate = async (id, userId, content) => {
+    return postRepo.patchPostStatus(id, userId, content);
+}

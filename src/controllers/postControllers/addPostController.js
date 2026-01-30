@@ -1,6 +1,6 @@
 
 import { postStatus } from '../../constants/const.js';
-import { addPost, tagCreate, getPostsById, getPost,getPostsPublic } from '../../services/postService.js';
+import { addPost, tagCreate, getPostsById, getPost, getPostsPublic, getPostStatusUpdate } from '../../services/postService.js';
 
 export const add = async (req, res) => {
     const content = req.body;
@@ -40,6 +40,17 @@ export const getListPublicPost = async (req, res) => {
     try {
         const listPostPublic = await getPostsPublic(postStatus.PUBLIC);
         res.status(201).json(listPostPublic);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+export const updatePostStatus = async (req, res) => {
+    const idPost = req.params.id;
+    const content = req.body;
+    try {
+        const post = await getPostStatusUpdate(idPost, req.userId,content );
+        res.status(201).json(post);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
