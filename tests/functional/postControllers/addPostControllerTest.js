@@ -31,13 +31,13 @@ describe('Add post controller tests', () => {
 
             // POST con token e payload
             const res = await request.execute(app)
-                .post('/')
+                .post('/user/post/create')
                 .set('Authorization', `Bearer ${token}`)
                 .send(postData)
 
             //Asserzioni
             expect(res.status).eq(400);
-            expect(res.body.message).eq('ValidationError: "name" is required');
+            expect(res.body.message).eq('ValidationError: "title" is required');
         })
 
         it('Should return 400 if description is not defined', async () => {
@@ -48,12 +48,12 @@ describe('Add post controller tests', () => {
 
             //Crea payload per creare post
             const postData = {
-                name: 'Test Name'
+                title: 'Test Name'
             };
 
             // POST con token e payload
             const res = await request.execute(app)
-                .post('/')
+                .post('/user/post/create')
                 .set('Authorization', `Bearer ${token}`)
                 .send(postData)
 
@@ -75,7 +75,7 @@ describe('Add post controller tests', () => {
 
             // POST senza token e con payload
             const res = await request.execute(app)
-                .post('/')
+                .post('/user/post/create')
                 .send(postData)
 
             //Asserzioni
@@ -96,7 +96,7 @@ describe('Add post controller tests', () => {
 
             // POST con fake token e con payload
             const res = await request.execute(app)
-                .post('/')
+                .post('/user/post/create')
                 .set('Authorization', `Bearer ${token}`)
                 .send(postData)
 
@@ -109,7 +109,7 @@ describe('Add post controller tests', () => {
     })
 
     describe('POST add post success', () => {
-        it('Should return 201 and post in status open', async () => {
+        it('Should return 201 and post in status draft', async () => {
 
             //Crea user
             const user = await fixturesUtils.createUser({}, true);
@@ -117,24 +117,22 @@ describe('Add post controller tests', () => {
 
             //Crea payload per creare post
             const postData = {
-                name: 'Test Name',
+                title: 'Test Name',
                 description: 'Test Description',
-                status: "open",
-                dueDate: new Date(2025, 12, 25)
+                status: "draft",
             };
 
             // POST con token e payload
             const res = await request.execute(app)
-                .post('/')
+                .post('/user/post/create')
                 .set('Authorization', `Bearer ${token}`)
                 .send(postData)
 
             //Asserzioni
             expect(res.status).eq(201);
             expect(res.body._id).to.exist;
-            expect(res.body.name).eq(postData.name);
+            expect(res.body.title).eq(postData.title);
             expect(res.body.ownerId).eq(user._id.toString());
-            expect(res.body.dueDate).eq(postData.dueDate.toISOString());
         })
     })
 })
