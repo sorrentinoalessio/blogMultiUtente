@@ -1,13 +1,18 @@
 
 class UserNormalizer {
-  async get(user) {
-   const { status, name, email } = user;
-   return {status,name,email};
+ get(user) {
+    const { name, email , avatar  } = user;
+    return { name, email , avatar};
+  }
+
+  getUser(user) {
+    return user.map(user => this.get(user));
   }
 }
 
+
 export default new UserNormalizer();
 
-    
+
 
 

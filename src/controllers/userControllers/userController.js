@@ -1,6 +1,8 @@
-import { add, verifyRegistrationToken } from '../../services/userService.js';
-import { loginUser, loginUserPending,userPasswordReset} from '../../services/userService.js';
+import { add, verifyRegistrationToken, loginUser, loginUserPending, userPasswordReset, userProfileList, userProfileUpdate } from '../../services/userService.js';
 import UserNormalaizer from '../../normalizer/userNormalizer.js';
+import { userStatus } from '../../constants/const.js';
+import userNormalizer from '../../normalizer/userNormalizer.js';
+
 
 export const addUser = async (req, res) => {
     const content = req.body;
@@ -8,7 +10,7 @@ export const addUser = async (req, res) => {
         const user = await add(content);
         const userNormalizer = await UserNormalaizer.get(user)
         res.status(201).json(userNormalizer);
-        
+
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -50,9 +52,26 @@ export const resetPassword = async (req, res) => {
         await userPasswordReset(email);
         res.status(200).send('La tua password è stata inviata alla tua email');
     } catch (err) {
-    res.status(err.status || 500).json({ message: err.message });
+        res.status(err.status || 500).json({ message: err.message });
+    }
 }
 
+export const userProfile = async (req, res) => {
+    try {
+        const profile = await userProfileList(req.userId, userStatus.ACTIVE, req.body);
+        res.status(200).json(userNormalizer.getUser(profile));
+    } catch (err) {
+        res.status(err.status || 500).json({ message: err.message });
+    }
 }
+export const updateProfile = async (req, res) => {
+    try {
+        const profileUpdate = await userProfileUpdate(req.userId, req.body);
+        res.status(200).json(userNormalizer.get(profileUpdate));
+    } catch (err) {
+        res.status(err.status || 500).json({ message: err.message });
+    }
+}
+
 
 

@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema(
         password: String,
         salt: String,
         status: { type: String, default: userStatus.PENDING},
-        registrationToken: String
+        registrationToken: String,
+        avatar: String
     },
     { 
         timestamps: true 

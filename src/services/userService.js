@@ -1,10 +1,8 @@
 
-import { type } from 'os';
 import UnauthorizedException from '../exceptions/UnauthorizedException.js';
 import userRepo from '../repository/UserRepository.js';
 import cryptoUtils from '../utils/CryptoUtils.js';
 import mailService from './mailService.js';
-import e from 'express';
 
 const users = {};
 
@@ -34,7 +32,7 @@ export const loginUser = async (email, password) => {
         throw new UnauthorizedException('Unauthorized');
     }
     const { accessToken, refreshToken } = cryptoUtils.generateTokens(user);
-    console.log(`L'utente ${user.name} ha effettuato il login`);                    //messaggio di conferma login
+    console.log(`L'utente ${user.name} ha effettuato il login`);
     return {
         accessToken: accessToken,
         refreshToken: refreshToken,
@@ -65,8 +63,6 @@ export const userPasswordReset = async (email) => {
     await mailService.sendPasswordMail(userTemp);
     const userHash = await addUserNewPassword(userTemp);
     return userHash;
-
-
 }
 
 export const addUserNewPassword = async (content) => {
@@ -75,6 +71,14 @@ export const addUserNewPassword = async (content) => {
     content.salt = salt;
     const user = await userRepo.addResetPassword(content);
     return user;
+}
+
+export const userProfileList = async (userId, status) => {
+    return await userRepo.getUserProfile(userId, status);
+}
+
+export const userProfileUpdate = async (userId, body) => {
+    return await userRepo.updateUserProfile(userId, body);
 }
 
 
