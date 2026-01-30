@@ -99,11 +99,30 @@ class UserRepository {
     }
 
     async getUserProfile(userId, status) {
-        const res = await userSchema.find({_id: userId , status: status}).catch(err => {
+        const res = await userSchema.find({ _id: userId, status: status }).catch(err => {
             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
         })
         return res.map((item) => item.toObject());
     }
+
+
+    async updateUserProfile(userId, body) {
+        const res = await userSchema.findOneAndUpdate({ _id: userId }, { $set: { name: body.name } }, { new: true }
+        ).catch((err) => {
+            if (err.code === 11000) {
+                throw new MongoInternalException(`something went wrong`, 500);
+            }
+            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
+
+        });
+        return res.toObject();
+    }
+
+
+
+
+
+
 
 
 

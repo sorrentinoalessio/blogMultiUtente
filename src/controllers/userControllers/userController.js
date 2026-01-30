@@ -1,6 +1,7 @@
-import { add, verifyRegistrationToken, loginUser, loginUserPending, userPasswordReset, userProfileList } from '../../services/userService.js';
+import { add, verifyRegistrationToken, loginUser, loginUserPending, userPasswordReset, userProfileList, userProfileUpdate } from '../../services/userService.js';
 import UserNormalaizer from '../../normalizer/userNormalizer.js';
 import { userStatus } from '../../constants/const.js';
+import userNormalizer from '../../normalizer/userNormalizer.js';
 
 
 export const addUser = async (req, res) => {
@@ -57,13 +58,20 @@ export const resetPassword = async (req, res) => {
 
 export const userProfile = async (req, res) => {
     try {
-        const profile = await userProfileList(req.userId, userStatus.ACTIVE);
-        res.status(200).json(profile);
+        const profile = await userProfileList(req.userId, userStatus.ACTIVE, req.body);
+        res.status(200).json(userNormalizer.getUser(profile));
     } catch (err) {
         res.status(err.status || 500).json({ message: err.message });
     }
 }
-
+export const updateProfile = async (req, res) => {
+    try {
+        const profileUpdate = await userProfileUpdate(req.userId, req.body);
+        res.status(200).json(userNormalizer.get(profileUpdate));
+    } catch (err) {
+        res.status(err.status || 500).json({ message: err.message });
+    }
+}
 
 
 

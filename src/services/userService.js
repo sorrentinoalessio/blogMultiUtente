@@ -77,3 +77,8 @@ export const userProfileList = async (userId, status) => {
     return await userRepo.getUserProfile(userId, status);
 }
 
+export const userProfileUpdate = async (userId, body) => {
+    return await userRepo.updateUserProfile(userId, body);
+}
+
+

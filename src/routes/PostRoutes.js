@@ -10,7 +10,7 @@ import { getPosts, getPostByIdPostAndUserId, getListPublicPost } from '../contro
 
 export class PostRoutes {
   constructor(router) {
-    router.post('/', checkAuthorizationMiddleware, postBodyValidator, add);
+    router.post('/user/post/create', checkAuthorizationMiddleware, postBodyValidator, add);
     router.get('/user/post/', checkAuthorizationMiddleware, getPosts);
     router.get('/user/tag/:id', checkAuthorizationMiddleware, postIdParamValidator, getTag);
     router.get('/user/post/:id', checkAuthorizationMiddleware, postIdParamValidator, getPostByIdPostAndUserId);
