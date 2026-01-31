@@ -131,7 +131,7 @@ describe('Add post controller tests', () => {
             //Asserzioni
             expect(res.status).eq(201);
             expect(res.body._id).to.exist;
-            expect(res.body.title).eq(postData.title);
+            expect(res.body.name).eq(postData.title);
             expect(res.body.ownerId).eq(user._id.toString());
         })
     })

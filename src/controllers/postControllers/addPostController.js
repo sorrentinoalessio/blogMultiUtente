@@ -38,7 +38,7 @@ export const getPostByIdPostAndUserId = async (req, res) => {
 }
 export const getListPublicPost = async (req, res) => {
     try {
-        const listPostPublic = await getPostsPublic(postStatus.PUBLIC);
+        const listPostPublic = await getPostsPublic();
         res.status(201).json(listPostPublic);
     } catch (err) {
         res.status(500).json({ message: err.message });

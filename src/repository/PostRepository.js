@@ -41,9 +41,15 @@ class PostRepository {
 
 
     async getTagsByPostId(id, userId) {
-        const tags = await postSchema.findOne({ _id: id, ownerId: userId });
-        return tags;
+        const post = await postSchema.findOne({ _id: id, ownerId: userId });
+        if (!post) {
+            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
+        }
+
+        const tagsByPost = post.tag.map(t => ({ tag: t.tag, _id: t._id }));
+        return tagsByPost;
     }
+
 
     async getByPostsId(userId) {
         const post = await postSchema.find({ ownerId: userId });
@@ -56,13 +62,13 @@ class PostRepository {
     }
 
     async getPostsStatus() {
-        const post = await postSchema.find({ status: postStatus.PUBLIC });
-        return post.map((item) => item.toObject());
+        const posts = await postSchema.find({ status: postStatus.PUBLIC });
+        return posts.map((item) => item.toObject());
     }
 
 
     async patchPostStatus(id, userId, content) {
-        const post = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId },{ $set: { status: content.status } },{ new: true });
+        const post = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId }, { $set: { status: content.status } }, { new: true });
         return post;
     }
 

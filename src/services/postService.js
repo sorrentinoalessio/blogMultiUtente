@@ -25,8 +25,8 @@ export const getPost = async (id, userId) => {
     return postRepo.getPost(id, userId);
 }
 
-export const getPostsPublic = async (status) => {
-    return postRepo.getPostsStatus(status);
+export const getPostsPublic = async () => {
+    return postRepo.getPostsStatus();
 }
 
 export const getPostStatusUpdate = async (id, userId, content) => {
