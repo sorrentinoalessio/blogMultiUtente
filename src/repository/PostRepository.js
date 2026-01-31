@@ -13,25 +13,16 @@ class PostRepository {
     }
 
     async tag(listTag) {
-        console.log(listTag)
         try {
-            const tagExisting = await tagSchemas.find({ // cerca quelli che sono presenti nel database
-                nameTag: { $in: listTag }
-            });
-
+            const tagExisting = await tagSchemas.find({nameTag: { $in: listTag }});
             const nameTags = tagExisting.map(t => t.nameTag);// estrai i nomi dei tag esistenti
             // 2. crea solo quelli mancanti
             const toCreate = listTag.filter(tag => !nameTags.includes(tag)).map(tag => ({ nameTag: tag }));//
-
             if (toCreate.length) {
                 await tagSchemas.insertMany(toCreate, { ordered: false });
             }
-
             // 3. ritorna TUTTI i tag
-            return await tagSchemas.find({
-                nameTag: { $in: listTag }
-            });
-
+            return await tagSchemas.find({ nameTag: { $in: listTag } });
         } catch (err) {
             throw new MongoInternalException(
                 `something went wrong: ${err.message}`,
