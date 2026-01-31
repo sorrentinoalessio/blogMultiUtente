@@ -15,6 +15,7 @@ export class PostRoutes {
     router.get('/user/post/:id', checkAuthorizationMiddleware, postIdParamValidator, getPostByIdPostAndUserId);
     router.get('/post/', getListPublicPost);
     router.patch('/user/post/status/:id', checkAuthorizationMiddleware, postUpdateBodyValidator, updatePostStatus);
+
   }
 }
 

@@ -13,6 +13,7 @@ class PostRepository {
     }
 
     async tag(listTag) {
+        console.log(listTag)
         try {
             const tagExisting = await tagSchemas.find({ // cerca quelli che sono presenti nel database
                 nameTag: { $in: listTag }
@@ -72,10 +73,10 @@ class PostRepository {
         return post;
     }
 
+    
 
+    }
 
-
-}
 export default new PostRepository();
 
 

@@ -32,3 +32,5 @@ export const getPostsPublic = async () => {
 export const getPostStatusUpdate = async (id, userId, content) => {
     return postRepo.patchPostStatus(id, userId, content);
 }
+
+
