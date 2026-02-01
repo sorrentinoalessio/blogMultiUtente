@@ -1,20 +1,42 @@
 import multer from "multer"; 
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
-export default async (req, res, next) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Set up Multer storage
+
+// Assicurati che la cartella "uploads" esista
+const uploadDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configurazione storage Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    cb(null, req.userId +'.jpg');
   }
 });
-const upload = multer({ storage: storage });
-upload.single('uploadedFile'), (req, res) => {console.log(req.file);res.send(`File uploaded successfully: ${req.file.filename}`)};
 
+const upload = multer({ storage });
+
+export default function imageCreationMiddleware(req, res, next) {
+  upload.single('uploadedFile')(req, res, function(err) {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Nessun file caricato' });
+    }
+
+    console.log('File caricato:', req.file.filename);
+    req.file.ownerId = req.userId
+    // Rispondi subito, non chiamare next() perché hai già gestito la risposta
+    res.status(200).json({ message: 'File caricato con successo', file: req.file });
+  });
 }

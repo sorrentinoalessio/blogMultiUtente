@@ -16,7 +16,7 @@ import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
  *     tags:
  *       - Post
  *     security:
- *       - bearerAuth: []  # Se usi token JWT
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -153,6 +153,33 @@ import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
  *       404:
  *         description: Post non trovato
  */
+
+/**
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: Carica un file
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               uploadedFile:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: File caricato con successo
+ *       400:
+ *         description: Errore nel caricamento
+ */
+
 
 export class PostRoutes {
   constructor(router) {
