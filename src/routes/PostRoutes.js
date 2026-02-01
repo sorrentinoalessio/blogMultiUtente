@@ -5,7 +5,7 @@ import { add } from '../controllers/postControllers/addPostController.js';
 import { getTag } from '../controllers/postControllers/tagPostController.js';
 import { getPosts, getPostByIdPostAndUserId, getListPublicPost, updatePostStatus } from '../controllers/postControllers/addPostController.js';
 import { postUpdateBodyValidator } from '../validators/postUpdateBodyValidator.js';
-import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
+
 
 
 /**
@@ -154,31 +154,7 @@ import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
  *         description: Post non trovato
  */
 
-/**
- * @swagger
- * /upload:
- *   post:
- *     summary: Carica un file
- *     tags:
- *       - Post
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               uploadedFile:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: File caricato con successo
- *       400:
- *         description: Errore nel caricamento
- */
+
 
 
 export class PostRoutes {
@@ -189,16 +165,7 @@ export class PostRoutes {
     router.get('/user/post/:id', checkAuthorizationMiddleware, postIdParamValidator, getPostByIdPostAndUserId);
     router.get('/post/', getListPublicPost);
     router.patch('/user/post/status/:id', checkAuthorizationMiddleware, postUpdateBodyValidator, updatePostStatus);
-    router.post("/upload", checkAuthorizationMiddleware, imageCreationMiddleware);
-    router.get("/form/upload", (req, res) => {
-      res.send(`
-    <h1>File Upload Demo</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-      <input type="file" name="uploadedFile" />
-      <button type="submit">Upload</button>
-    </form>
-  `);
-    });
+       
   }
 }
 

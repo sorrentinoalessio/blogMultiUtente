@@ -23,10 +23,6 @@ app.use(cors({
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-//app inserimento immagine
-// -----------
-
-//---------------
 
 await connect()
 const httpServer = http.createServer(app);

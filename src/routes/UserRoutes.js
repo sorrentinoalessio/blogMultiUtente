@@ -5,6 +5,7 @@ import { loginValidator } from '../validators/loginValidator.js';
 import { emailValidator } from '../validators/emailValidator.js';
 import { profileBodyValidator } from '../validators/profileBodyValidator.js'
 import checkAuthorizationMiddleware from '../middlewares/checkAuthorizationMiddleware.js';
+import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
 
 /**
  * @swagger
@@ -189,6 +190,31 @@ import checkAuthorizationMiddleware from '../middlewares/checkAuthorizationMiddl
  *       401:
  *         description: Utente non autorizzato
  */
+/**
+ * @swagger
+ * /user/profile/avatar/upload:
+ *   post:
+ *     summary: Carica un file
+ *     tags:
+ *       - Utente
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               uploadedFile:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: File caricato con successo
+ *       400:
+ *         description: Errore nel caricamento
+ */
 
 
 export class UserRoutes {
@@ -199,7 +225,7 @@ export class UserRoutes {
     router.post('/user/pending', loginValidator, loginPending);
     router.post('/user/reset_password', emailValidator, resetPassword);
     router.get('/user/profile', checkAuthorizationMiddleware, userProfile);
-    router.patch('/user/profile/update', checkAuthorizationMiddleware,profileBodyValidator, updateProfile);
-
+    router.patch('/user/profile/update', checkAuthorizationMiddleware, profileBodyValidator, updateProfile);
+    router.post("/user/profile/avatar/upload", checkAuthorizationMiddleware, imageCreationMiddleware);
   }
 }
