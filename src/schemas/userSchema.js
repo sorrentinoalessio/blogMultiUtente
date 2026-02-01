@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
 );
 userSchema.pre('save', function(next) {
     if (!this.avatar) {
-        this.avatar = `../upload/${this._id.toString()}.jpg`;
+        this.avatar = `../../avatar/uploads/${this._id.toString()}.jpg`;
     }
     next();
 });
