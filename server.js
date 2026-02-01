@@ -5,11 +5,15 @@ import { connect } from './database.js';
 import {Server} from 'socket.io';
 import http from 'http';
 import SocketIoInitializer from './src/SocketIoInitializer.js';
+import { swaggerUi, swaggerDocs } from "./swagger.js";
+
+
 export const host = 'localhost';
 export const port = 3001;
 const app = express();
 
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //app inserimento immagine
 // -----------
@@ -29,6 +33,10 @@ app.use((err, req, res, next) => {
         next(err);
     }
 })
+app.get("/api/hello", (req, res) => {
+  res.json({ message: "Ciao mondo!" });
+});
+
 httpServer.listen(port, host, () => {
     console.log(`Server avviato ${host}: ${port}.`)
 })
