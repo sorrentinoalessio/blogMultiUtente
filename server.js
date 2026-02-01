@@ -6,13 +6,21 @@ import {Server} from 'socket.io';
 import http from 'http';
 import SocketIoInitializer from './src/SocketIoInitializer.js';
 import { swaggerUi, swaggerDocs } from "./swagger.js";
-
+import cors from "cors";
 
 export const host = 'localhost';
 export const port = 3001;
 const app = express();
 
 app.use(express.json());
+
+
+app.use(cors({
+  origin: "*", // o ['http://localhost:3000'] se vuoi restringere
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 /*
