@@ -15,5 +15,11 @@ const userSchema = new mongoose.Schema(
         timestamps: true 
     }
 );
+userSchema.pre('save', function(next) {
+    if (!this.avatar) {
+        this.avatar = `../upload/${this._id.toString()}.jpg`;
+    }
+    next();
+});
 
 export default mongoose.model('user', userSchema);
