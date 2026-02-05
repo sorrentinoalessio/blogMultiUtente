@@ -4,7 +4,7 @@ import { registerRoutes } from './src/routes/routes.js';
 import { connect } from './database.js';
 import {Server} from 'socket.io';
 import http from 'http';
-import SocketIoInitializer from './src/SocketIoInitializer.js';
+import SocketIoInitializer from './src/components/SocketIoInitializer.js';
 import { swaggerUi, swaggerDocs } from "./swagger.js";
 import cors from "cors";
 

@@ -1,14 +1,11 @@
 
-import { postStatus } from '../../constants/const.js';
-import { addPost, tagCreate, getPostsById, getPost, getPostsPublic, getPostStatusUpdate } from '../../services/postService.js';
+import { addPost, getPostsById, getPost, getPostsPublic, getPostStatusUpdate } from '../../services/postService.js';
+import TagUtils from '../../utils/TagUtils.js';
 
 export const add = async (req, res) => {
     const content = req.body;
-    let tags = []
     if (content.tag) {
-        tags = content.tag.map(tag => tag.toLowerCase());
-        const tagsRepo = await tagCreate(tags);
-        content.tag = tagsRepo.map(t => ({ id: t._id, tag: t.nameTag }));
+        content.tag = await TagUtils.createTagUtils(content.tag)
     }
 
     try {

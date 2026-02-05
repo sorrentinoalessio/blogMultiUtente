@@ -4,6 +4,7 @@ import CryptoUtils from '../../src/utils/CryptoUtils.js';
 import userSchema from '../../src/schemas/userSchema.js';
 import { postStatus, userStatus } from '../../src/constants/const.js';
 import postSchema from '../../src/schemas/postSchema.js';
+import TagUtils from '../../src/utils/TagUtils.js';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -27,13 +28,13 @@ class FixturesUtils {
     }
     async createPost(data, save) {
         const post = {
-            name: data.name || 'test post',
-            _id: data.id || new objectId(),
-            ownerId: data.ownerId || null,
+            title: data.title || 'test post',
             description: data.description || 'test description',
-            status: data.status || postStatus.OPEN,
-            dueDate: data.dueDate || new Date()
+            status: data.status || postStatus.DRAFT,
+            datePost: data.datePost || new Date(),
+            tag: ["cinema"]
         }
+
         if (save) {
             const res = await postSchema.create(post);
             return res.toObject();
