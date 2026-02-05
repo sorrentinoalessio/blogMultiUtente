@@ -32,7 +32,8 @@ class FixturesUtils {
             description: data.description || 'test description',
             status: data.status || postStatus.DRAFT,
             datePost: data.datePost || new Date(),
-            tag: ["cinema"]
+            tag: data.tag || [{ tag: "cinema" }]
+
         }
 
         if (save) {
