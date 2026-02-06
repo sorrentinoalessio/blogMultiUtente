@@ -80,12 +80,19 @@ describe('Add post controller tests', () => {
         it('Should return 201 and post in status draft', async () => {
             const user = await fixturesUtils.createUser({}, true);
             const token = CryptoUtils.generateToken(user, 86400);
-            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const postData = {
+                title: "nome post",
+                description: "descrizione post",
+                tag: ["cinema"]
+            }
+            console.log(postData)
+            
             const res = await request.execute(app)
                 .post('/user/post/create')
                 .set('Authorization', `Bearer ${token}`)
                 .send(postData)
-            postData.tag = await TagUtils.createTagUtils(postData.tag)
+                console.log(res)
+           // postData.tag = await TagUtils.createTagUtils(postData.tag)
             expect(res.status).eq(201);
             expect(res.body._id).to.exist;
             expect(res.body.title).eq(postData.title);

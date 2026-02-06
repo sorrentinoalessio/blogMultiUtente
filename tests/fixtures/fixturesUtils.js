@@ -30,9 +30,7 @@ class FixturesUtils {
         const post = {
             title: data.title || 'test post',
             description: data.description || 'test description',
-            status: data.status || postStatus.DRAFT,
-            datePost: data.datePost || new Date(),
-            tag: data.tag || [{ tag: "cinema" }]
+            
 
         }
 

@@ -12,6 +12,8 @@ const bodyValidator = Joi.object({
     tag: Joi.array().items(Joi.string().min(3).max(24)), // tag come array di stringhe
     imagePost: Joi.string()
 
-})
+}).unknown(true);
 
 export const postBodyValidator = validator.body(bodyValidator);
+
+
