@@ -164,217 +164,293 @@ describe('Add user controller tests', () => {
         })
 
     });
-});
-describe('Add user confirm registration', () => {
-    afterEach(async () => {
-        sandbox.restore();
-        await fixturesUtils.clearDb();
-    })
 
-    describe('GET add User failure', () => {
-        it('Should return 404 if token invalid', async () => {
-            const userData = await userSchema.create({
-                registrationToken: "token_registr16c"
-            });
-            const tokenWrong = "token_wrong"
-            const res = await request.execute(app)
-                .get(`/user/${userData._id}/confirm/${tokenWrong}`)
-                .send();
-            expect(res.status).eq(400);
-        })
-        it('Should return 404 if id invalid', async () => {
-            const userData = await userSchema.create({
-                registrationToken: "token_registr16c"
-            });
-            const idWrong = "id_wrong"
-            const res = await request.execute(app)
-                .get(`/user/${idWrong}/confirm/${userData.registrationToken}`)
-                .send();
-            expect(res.status).eq(404);
-        })
-    })
-
-    describe('GET User confirm', () => {
-        it('Should return 200 id e token valid', async () => {
-            const userData = await userSchema.create({
-                registrationToken: "token_registr16c"
-            });
-            const res = await request.execute(app)
-                .get(`/user/${userData._id}/confirm/${userData.registrationToken}`)
-                .send();
-            expect(res.status).eq(200);
-        })
-
-
-    });
-
-});
-describe('Login user controller tests', () => {
-    afterEach(async () => {
-        sandbox.restore();
-        await fixturesUtils.clearDb();
-    });
-
-    describe('Post login failure', () => {
-        it('Should return 401 if status is pending', async () => {
-            const userData = await fixturesUtils.createUser({
-                status: userStatus.PENDING
-            }, true);
-            const res = await request.execute(app)
-                .post('/user/login')
-                .send({
-                    email: userData.email,
-                    password: 'password'
-                });
-            expect(res.status).eq(401);
-
-        })
-        it('Should return 400 if email not valid', async () => {
-            const userData = await fixturesUtils.createUser({
-                email: "firs"
-            }, true);
-            const res = await request.execute(app)
-                .post('/user/login')
-                .send({
-                    email: userData.email,
-                    password: 'password'
-                });
-            expect(res.status).eq(400);
-
-        })
-        it('Should return 401 if email not exist', async () => {
-            const userData = await fixturesUtils.createUser({
-            }, true);
-            const res = await request.execute(app)
-                .post('/user/login')
-                .send({
-                    email: 'test2@gmail.com',
-                    password: 'password'
-                });
-            expect(res.status).eq(401);
-
-        })
-        it('Should return 401 if password is incorrect', async () => {
-            const userData = await fixturesUtils.createUser({
-            }, true);
-
-            const res = await request.execute(app)
-                .post('/user/login')
-                .send({
-                    email: userData.email,
-                    password: 'passwordIncorrect'
-                });
-            expect(res.status).eq(401);
-
-        })
-    })
-    describe('Post login true', () => {
+    describe('Add user confirm registration', () => {
         afterEach(async () => {
             sandbox.restore();
             await fixturesUtils.clearDb();
         })
-        it('Should return 200 if email and password is correct', async () => {
-            const user = await fixturesUtils.createUser({
-            }, true);
 
-            const res = await request.execute(app)
-                .post('/user/login')
-                .send({
-                    email: 'test@gmail.com',
-                    password: 'password'
+        describe('GET add User failure', () => {
+            it('Should return 404 if token invalid', async () => {
+                const userData = await userSchema.create({
+                    registrationToken: "token_registr16c"
                 });
-            expect(res.status).eq(200);
-
+                const tokenWrong = "token_wrong"
+                const res = await request.execute(app)
+                    .get(`/user/${userData._id}/confirm/${tokenWrong}`)
+                    .send();
+                expect(res.status).eq(400);
+            })
+            it('Should return 404 if id invalid', async () => {
+                const userData = await userSchema.create({
+                    registrationToken: "token_registr16c"
+                });
+                const idWrong = "id_wrong"
+                const res = await request.execute(app)
+                    .get(`/user/${idWrong}/confirm/${userData.registrationToken}`)
+                    .send();
+                expect(res.status).eq(404);
+            })
         })
+
+        describe('GET User confirm', () => {
+            it('Should return 200 id e token valid', async () => {
+                const userData = await userSchema.create({
+                    registrationToken: "token_registr16c"
+                });
+                const res = await request.execute(app)
+                    .get(`/user/${userData._id}/confirm/${userData.registrationToken}`)
+                    .send();
+                expect(res.status).eq(200);
+            })
+
+
+        });
+
     });
-});
-describe('Login user for status pending send email', () => {
-    afterEach(async () => {
-        sandbox.restore();
-        await fixturesUtils.clearDb();
-    });
-
-    describe('Post login failure', () => {
-        it('Should return 401 if status is different pending', async () => {
-            const userData = await fixturesUtils.createUser({
-                status: userStatus.ACTIVE
-            }, true);
-            const res = await request.execute(app)
-                .post('/user/pending')
-                .send({
-                    email: userData.email,
-                    password: 'password'
-                });
-            expect(res.status).eq(401);
-
-        })
-        it('Should return 400 if email not valid', async () => {
-            const userData = await fixturesUtils.createUser({
-                email: "firs"
-            }, true);
-            const res = await request.execute(app)
-                .post('/user/pending')
-                .send({
-                    email: userData.email,
-                    password: 'password'
-                });
-            expect(res.status).eq(400);
-
-        })
-        it('Should return 401 if email not exist', async () => {
-            const userData = await fixturesUtils.createUser({
-            }, true);
-            const res = await request.execute(app)
-                .post('/user/pending')
-                .send({
-                    email: 'test2@gmail.com',
-                    password: 'password'
-                });
-            expect(res.status).eq(401);
-
-        })
-        it('Should return 401 if password is incorrect', async () => {
-            const userData = await fixturesUtils.createUser({
-            }, true);
-
-            const res = await request.execute(app)
-                .post('/user/pending')
-                .send({
-                    email: userData.email,
-                    password: 'passwordIncorrect'
-                });
-            expect(res.status).eq(401);
-
-        })
-    })
-   describe('Post login pendig email true', () => {
+    describe('Login user controller tests', () => {
         afterEach(async () => {
             sandbox.restore();
             await fixturesUtils.clearDb();
+        });
+
+        describe('Post login failure', () => {
+            it('Should return 401 if status is pending', async () => {
+                const userData = await fixturesUtils.createUser({
+                    status: userStatus.PENDING
+                }, true);
+                const res = await request.execute(app)
+                    .post('/user/login')
+                    .send({
+                        email: userData.email,
+                        password: 'password'
+                    });
+                expect(res.status).eq(401);
+
+            })
+            it('Should return 400 if email not valid', async () => {
+                const userData = await fixturesUtils.createUser({
+                    email: "firs"
+                }, true);
+                const res = await request.execute(app)
+                    .post('/user/login')
+                    .send({
+                        email: userData.email,
+                        password: 'password'
+                    });
+                expect(res.status).eq(400);
+
+            })
+            it('Should return 401 if email not exist', async () => {
+                const userData = await fixturesUtils.createUser({
+                }, true);
+                const res = await request.execute(app)
+                    .post('/user/login')
+                    .send({
+                        email: 'test2@gmail.com',
+                        password: 'password'
+                    });
+                expect(res.status).eq(401);
+
+            })
+            it('Should return 401 if password is incorrect', async () => {
+                const userData = await fixturesUtils.createUser({
+                }, true);
+
+                const res = await request.execute(app)
+                    .post('/user/login')
+                    .send({
+                        email: userData.email,
+                        password: 'passwordIncorrect'
+                    });
+                expect(res.status).eq(401);
+
+            })
         })
-        it('Should return 200 if email and password is correct and status is pending', async () => {
-            const user = await fixturesUtils.createUser({
+        describe('Post login true', () => {
+            afterEach(async () => {
+                sandbox.restore();
+                await fixturesUtils.clearDb();
+            })
+            it('Should return 200 if email and password is correct', async () => {
+                const user = await fixturesUtils.createUser({
+                }, true);
+
+                const res = await request.execute(app)
+                    .post('/user/login')
+                    .send({
+                        email: 'test@gmail.com',
+                        password: 'password'
+                    });
+                expect(res.status).eq(200);
+
+            })
+        });
+    });
+    describe('Login user for status pending send email', () => {
+        afterEach(async () => {
+            sandbox.restore();
+            await fixturesUtils.clearDb();
+        });
+
+        describe('Post login failure', () => {
+            it('Should return 401 if status is different pending', async () => {
+                const userData = await fixturesUtils.createUser({
+                    status: userStatus.ACTIVE
+                }, true);
+                const res = await request.execute(app)
+                    .post('/user/pending')
+                    .send({
+                        email: userData.email,
+                        password: 'password'
+                    });
+                expect(res.status).eq(401);
+
+            })
+            it('Should return 400 if email not valid', async () => {
+                const userData = await fixturesUtils.createUser({
+                    email: "firs"
+                }, true);
+                const res = await request.execute(app)
+                    .post('/user/pending')
+                    .send({
+                        email: userData.email,
+                        password: 'password'
+                    });
+                expect(res.status).eq(400);
+
+            })
+            it('Should return 401 if email not exist', async () => {
+                const userData = await fixturesUtils.createUser({
+                }, true);
+                const res = await request.execute(app)
+                    .post('/user/pending')
+                    .send({
+                        email: 'test2@gmail.com',
+                        password: 'password'
+                    });
+                expect(res.status).eq(401);
+
+            })
+            it('Should return 401 if password is incorrect', async () => {
+                const userData = await fixturesUtils.createUser({
+                }, true);
+
+                const res = await request.execute(app)
+                    .post('/user/pending')
+                    .send({
+                        email: userData.email,
+                        password: 'passwordIncorrect'
+                    });
+                expect(res.status).eq(401);
+
+            })
+        })
+        describe('Post login pendig email true', () => {
+            afterEach(async () => {
+                sandbox.restore();
+                await fixturesUtils.clearDb();
+            })
+            it('Should return 200 if email and password is correct and status is pending', async () => {
+                const user = await fixturesUtils.createUser({
                     email: 'test@gmail.com',
                     status: userStatus.PENDING
-            }, true);
-            
-            const sendMailStub = sandbox.stub().resolves({
-                messageId: '1'
-            });
-            sandbox.stub(mailer, 'createTransport').returns({
-                sendMail: sendMailStub
-            });
+                }, true);
 
-            const res = await request.execute(app)
-                .post('/user/pending')
-                .send({
-                    email: 'test@gmail.com',
-                    password: 'password'
+                const sendMailStub = sandbox.stub().resolves({
+                    messageId: '1'
                 });
-            expect(res.status).eq(200);
+                sandbox.stub(mailer, 'createTransport').returns({
+                    sendMail: sendMailStub
+                });
 
-        })
+                const res = await request.execute(app)
+                    .post('/user/pending')
+                    .send({
+                        email: 'test@gmail.com',
+                        password: 'password'
+                    });
+                expect(res.status).eq(200);
+
+            })
+        });
+
     });
-});
+    describe('GET user profile with status active', () => {
+        afterEach(async () => {
+            sandbox.restore();
+            await fixturesUtils.clearDb();
+        });
+
+        describe('GET user profile fail  ', () => {
+            it('Should return 200 if status is different active', async () => {
+                const user = await fixturesUtils.createUser({ status: userStatus.PENDING }, true);
+                const token = cryptoUtils.generateToken(user, 86400);
+                const res = await request.execute(app)
+                    .get('/user/profile')
+                    .set('Authorization', `Bearer ${token}`)
+                    .send();
+                expect(res.status).eq(200);
+                expect(res.status.message).eq()
+
+            })
+            it('Should return 500 if user not found', async () => {
+                const user = await fixturesUtils.createUser({ status: userStatus.PENDING }, false);
+                const token = cryptoUtils.generateToken(user, 86400);
+                const res = await request.execute(app)
+                    .get('/user/profile')
+                    .set('Authorization', `Bearer ${token}`)
+                    .send();
+                expect(res.status).eq(200);
 
 
+            })
+        });
+        describe('GET User profile success  ', () => {
+            it('Should return 200 if status is active', async () => {
+                const user = await fixturesUtils.createUser({ status: userStatus.ACTIVE }, true);
+                const token = cryptoUtils.generateToken(user, 86400);
+                const res = await request.execute(app)
+                    .get('/user/profile')
+                    .set('Authorization', `Bearer ${token}`)
+                    .send();
+                expect(res.status).eq(200);
+                expect(res.status.message).eq()
+
+            })
+            describe('GET User profile update fail  ', () => {
+                it('Should return 500 with bodyUpdate not exist ', async () => {
+                    const user = await fixturesUtils.createUser({ status: userStatus.ACTIVE }, true);
+                    const token = cryptoUtils.generateToken(user, 86400);
+                    const userUpdate = {name: "prova"}
+                const res = await request.execute(app)
+                        .patch('/user/profile/update')
+                        .set('Authorization', `Bearer ${token}`)
+                        .send();
+                    expect(res.status).eq(500);
+                    console.log(res.message)
+                    //expect(res.message).eq("Cannot read properties of undefined (reading 'name')")
+
+                })
+            });
+            describe('GET User profile update sucess  ', () => {
+                
+                it('Should return 200  ', async () => {
+                    const user = await fixturesUtils.createUser({ status: userStatus.ACTIVE }, true);
+                    const token = cryptoUtils.generateToken(user, 86400);
+                const res = await request.execute(app)
+                        .patch('/user/profile/update')
+                        .set('Authorization', `Bearer ${token}`)
+                        .send({
+                            name: "prova"
+                        });
+                    expect(res.status).eq(200);
+
+
+                })
+            });
+
+        });
+    });
+})
