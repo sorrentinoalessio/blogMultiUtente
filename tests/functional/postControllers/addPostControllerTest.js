@@ -5,7 +5,6 @@ import app from '../../../server.js';
 import CryptoUtils from '../../../src/utils/CryptoUtils.js';
 import fixturesUtils from '../../fixtures/fixturesUtils.js';
 import sinon from 'sinon';
-import TagUtils from '../../../src/utils/TagUtils.js';
 
 const sandbox = sinon.createSandbox();
 
@@ -68,12 +67,10 @@ describe('Add post controller tests', () => {
                 .post('/user/post/create')
                 .set('Authorization', `Bearer ${token}`)
                 .send(postData)
-
             expect(res.status).eq(401);
             expect(res.body.ownerId).eq(undefined);
         })
-
-
+        
     })
 
     describe('POST add post success', () => {
@@ -85,14 +82,10 @@ describe('Add post controller tests', () => {
                 description: "descrizione post",
                 tag: ["cinema"]
             }
-            console.log(postData)
-            
             const res = await request.execute(app)
                 .post('/user/post/create')
                 .set('Authorization', `Bearer ${token}`)
                 .send(postData)
-                console.log(res)
-           // postData.tag = await TagUtils.createTagUtils(postData.tag)
             expect(res.status).eq(201);
             expect(res.body._id).to.exist;
             expect(res.body.title).eq(postData.title);

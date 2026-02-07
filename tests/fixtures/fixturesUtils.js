@@ -26,20 +26,24 @@ class FixturesUtils {
         }
         return user;
     }
-    async createPost(data, save) {
-        const post = {
-            title: data.title || 'test post',
-            description: data.description || 'test description',
-            
+   async createPost(data = {}, save = true) {
+  const post = {
+    title: data.title || 'test post',
+    description: data.description || 'test description',
+    ownerId: data.ownerId ?? null,
+    status: data.status,
+    tag: data.tag || [{tag: "cinema",_id: new objectId()}],
+    img: data.img
+  };
 
-        }
+  if (save) {
+    const res = await postSchema.create(post);
+    return res.toObject();
+  }
 
-        if (save) {
-            const res = await postSchema.create(post);
-            return res.toObject();
-        }
-        return post;
-    }
+  return post;
+}
+
     async clearDb() {
         await postSchema.deleteMany();
        await userSchema.deleteMany();
