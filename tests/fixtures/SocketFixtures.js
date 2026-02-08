@@ -32,7 +32,7 @@ class SocketFixtures {
         }
     };
     createClient() {
-        return ioClient('http://localhost:3001/todolist', {
+        return ioClient('http://localhost:3001/blog', {
             transports: ['websocket'],
             autoConnect: false
 

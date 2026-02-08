@@ -33,6 +33,16 @@ class UserRepository {
         return res.toObject();
     }
 
+    async getByToken(token) {
+        const user = await userSchema.findOne({ registrationToken: token }).catch((err) => {
+            throw new NotFoundException('Token not found');
+        });
+        if (!user) {
+            throw new NotFoundException('Token not found');
+        }
+        return user.toObject();
+    }
+
     async getActiveByEmail(email) {
         const res = await userSchema.findOne({ email: email, status: userStatus.ACTIVE }).catch((err) => {
             throw new DomainException('Generic error');
@@ -42,20 +52,12 @@ class UserRepository {
         }
         return res.toObject();
     }
-    async getManyByUserOwnerId(ownerId) {
-        const res = await userSchema.find({ _id: ownerId }).catch(err => {
-            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-        })
-        return res.map(({ _id, name, email }) => ({ _id, name, email }));
-
-    }
-
 
     async findPendingbyEmail(email) {
         try {
             const userPending = await userSchema.findOne({ email: email, status: userStatus.PENDING });
             if (!userPending) {
-                throw new UnauthorizedException('Unauthorized666');
+                throw new UnauthorizedException('Unauthorized');
             }
             return userPending.toObject();
         } catch (err) {
@@ -66,10 +68,12 @@ class UserRepository {
 
     async findUserForResetPassword(email) {
         try {
-            const user = await userSchema.findOne({ email: email });
+
+            const user = await userSchema.findOneAndUpdate({ email: email }, { $set: { registrationToken: CryptoUtils.generateRandomCode(16) } }, { new: true });
             if (!user) {
-                throw new UnauthorizedException('Unauthorized666');
+                throw new UnauthorizedException('Unauthorized');
             }
+
             return user.toObject();
         } catch (err) {
             if (err instanceof UnauthorizedException) throw err;
@@ -78,23 +82,24 @@ class UserRepository {
     }
 
 
-    async addResetPassword(content) {
-        const res = await userSchema.findOneAndUpdate({ email: content.email },
+    async addResetPassword(password, salt, token) {
+        const res = await userSchema.findOneAndUpdate({ registrationToken: token },
             {
                 $set: {
-                    password: content.password,
-                    salt: content.salt,
-                    registrationToken: content.registrationToken
+                    password: password,
+                    salt: salt,
+                    registrationToken: null
                 }
-
             }
         ).catch((err) => {
             if (err.code === 11000) {
                 throw new MongoInternalException(`something went wrong`, 500);
             }
             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-
         });
+        if (!res) {
+        throw new UnauthorizedException('Unauthorized');
+    }
         return res.toObject();
     }
 

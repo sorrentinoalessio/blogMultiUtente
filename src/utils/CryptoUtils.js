@@ -7,6 +7,7 @@ class CryptoUtils {
   generateRandomCode(length, type) {
     return cryptoRandomString({length: length, type: type || 'base64'})
   }
+  
   hashPassword(password){
     const salt = this.generateRandomCode(10)
     return {

@@ -16,8 +16,12 @@ export const add = async (content) => {
     return user;
 }
 
-export const verifyRegistrationToken = async (id, token) => {
-    return await userRepo.getByIdAndToken(id, token);
+export const verifyRegistrationToken = async (token) => {
+    return await userRepo.getByIdAndToken(token);
+}
+
+export const verifyToken = async (token) => {
+    return await userRepo.getByToken(token);
 }
 
 export const loginUser = async (email, password) => {
@@ -53,24 +57,18 @@ export const loginUserPending = async (email, password) => {
 }
 
 export const userPasswordReset = async (email) => {
+
     const userTemp = await userRepo.findUserForResetPassword(email);
-    const passwordTemp = cryptoUtils.generateRandomCode(10);
-    userTemp.password = passwordTemp;
     if (!userTemp) {
         throw new UnauthorizedException('Unauthorized');
     }
 
-    await mailService.sendPasswordMail(userTemp);
-    const userHash = await addUserNewPassword(userTemp);
-    return userHash;
+    await mailService.sendMailLinkPassRecovery(userTemp);
 }
 
-export const addUserNewPassword = async (content) => {
-    const { password, salt } = cryptoUtils.hashPassword(content.password);
-    content.password = password;
-    content.salt = salt;
-    const user = await userRepo.addResetPassword(content);
-    return user;
+export const addUserNewPassword = async (passwordNew,token) => {
+    const { password, salt } = cryptoUtils.hashPassword(passwordNew);
+    await userRepo.addResetPassword(password, salt,token);
 }
 
 export const userProfileList = async (userId, status) => {

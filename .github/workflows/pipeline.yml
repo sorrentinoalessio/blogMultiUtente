@@ -61,7 +61,7 @@ jobs:
             npm install
 
             # Primo deploy: avvia se non esiste
-            pm2 describe todolist || pm2 start ecosystem.config.cjs --env production
+            pm2 describe blog || pm2 start ecosystem.config.cjs --env production
 
             # Reload/apply changes per deploy successivi
             pm2 reload ecosystem.config.cjs --env production

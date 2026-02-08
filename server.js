@@ -8,7 +8,7 @@ import SocketIoInitializer from './src/components/SocketIoInitializer.js';
 import { swaggerUi, swaggerDocs } from "./swagger.js";
 import cors from "cors";
 
-export const host = 'localhost';
+export const host = 'localhost' ;
 export const port = 3001;
 const app = express();
 

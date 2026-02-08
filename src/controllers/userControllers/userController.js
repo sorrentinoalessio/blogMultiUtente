@@ -1,14 +1,15 @@
-import { add, verifyRegistrationToken, loginUser, loginUserPending, userPasswordReset, userProfileList, userProfileUpdate } from '../../services/userService.js';
+import { add, verifyRegistrationToken, loginUser, loginUserPending, userPasswordReset, userProfileList, userProfileUpdate, addUserNewPassword, verifyToken } from '../../services/userService.js';
 import UserNormalaizer from '../../normalizer/userNormalizer.js';
 import { userStatus } from '../../constants/const.js';
 import userNormalizer from '../../normalizer/userNormalizer.js';
-
+import { hostname } from 'os';
+import mailService from '../../services/mailService.js';
 
 export const addUser = async (req, res) => {
     const content = req.body;
     try {
         const user = await add(content);
-        const userNormalizer = await UserNormalaizer.get(user)
+        const userNormalizer = UserNormalaizer.get(user)
         res.status(201).json(userNormalizer);
 
     } catch (err) {
@@ -24,6 +25,19 @@ export const confirmRegistration = async (req, res) => {
         res.status(200).send('Conferma avvenuta. Registrazione completata');
     } catch (err) {
         res.status(err.status).json({ message: err.message });
+    }
+}
+
+export const cofirmUserResetPassword = async (req, res) => {
+
+    const token = req.params.token;
+    try {
+        const user = await verifyToken(token);
+        console.log(user)
+        await mailService.sendMailNewPassword(user);
+        res.status(200).send(`token verificato `);
+    } catch (err) {
+        res.status(err.status || 400).json({ message: err.message });
     }
 }
 
@@ -50,7 +64,7 @@ export const resetPassword = async (req, res) => {
     const { email } = req.body;
     try {
         await userPasswordReset(email);
-        res.status(200).send('La tua password è stata inviata alla tua email');
+        res.status(200).send('Email di reset password inviata');
     } catch (err) {
         res.status(err.status || 500).json({ message: err.message });
     }
@@ -73,5 +87,15 @@ export const updateProfile = async (req, res) => {
     }
 }
 
+export const newPassword = async (req, res) => {
+    const token = req.params.token
+    const { passwordNew } = req.body;
+    try {
+        await addUserNewPassword(passwordNew, token)
+        res.status(200).send('password modificata');
+    } catch (err) {
+        res.status(err.status || 500).json({ message: err.message });
+    }
+}
 
 

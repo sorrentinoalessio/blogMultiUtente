@@ -1,6 +1,6 @@
 class SocketIoInitializer {
   constructor(io){
-    io = io.of('todolist')
+    io = io.of('blog')
     io.use(async (socket,next) =>{
         next()
     })
