@@ -16,8 +16,8 @@ export const add = async (content) => {
     return user;
 }
 
-export const verifyRegistrationToken = async (token) => {
-    return await userRepo.getByIdAndToken(token);
+export const verifyRegistrationToken = async (id,token) => {
+    return await userRepo.getByIdAndToken(id,token);
 }
 
 export const verifyToken = async (token) => {
