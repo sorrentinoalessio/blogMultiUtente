@@ -7,6 +7,7 @@ import {passwordValidator } from '../validators/passwordValidator.js';
 import { profileBodyValidator } from '../validators/profileBodyValidator.js'
 import checkAuthorizationMiddleware from '../middlewares/checkAuthorizationMiddleware.js';
 import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
+import {confirmTokenValidator} from '../validators/confirmTokenResetPassValidator.js'
 
 /**
  * @swagger
@@ -228,7 +229,7 @@ export class UserRoutes {
     router.get('/user/profile', checkAuthorizationMiddleware, userProfile);
     router.patch('/user/profile/update', checkAuthorizationMiddleware, profileBodyValidator, updateProfile);
     router.post("/user/profile/avatar/upload", checkAuthorizationMiddleware, imageCreationMiddleware);
-    router.get('/user/reset/:token', confirmRegistrationValidator, cofirmUserResetPassword);
+    router.get('/user/reset/:token', confirmTokenValidator, cofirmUserResetPassword);
     router.post('/user/new_password/:token',passwordValidator,newPassword);
   }
 }

@@ -2,7 +2,7 @@
 import { addPost, getPostsById, getPost, getPostsPublic, getPostStatusUpdate } from '../../services/postService.js';
 import TagUtils from '../../utils/TagUtils.js';
 
-export const add = async (req, res) => {
+export const createPost = async (req, res) => {
     const content = req.body;
     if (content.tag) {
         content.tag = await TagUtils.createTagUtils(content.tag)
