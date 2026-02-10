@@ -154,7 +154,6 @@ describe('Repo post controller tests', () => {
 
         it('Should return 201 if tag found', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id  }, true);
-            console.log(postData)
             const res = await request.execute(app)
                 .get(`/user/tag/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)

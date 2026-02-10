@@ -18,7 +18,9 @@ class FixturesUtils {
             email: data.email || 'test@gmail.com',
             status: data.status || userStatus.ACTIVE,
             password: password,
-            salt: salt
+            salt: salt,
+            registrationToken: data.registrationToken || CryptoUtils.generateRandomCode(16)
+
         }
         if (save) {
             const res = await userSchema.create(user);

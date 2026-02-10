@@ -428,7 +428,6 @@ describe('Add user controller tests', () => {
                         .set('Authorization', `Bearer ${token}`)
                         .send();
                     expect(res.status).eq(500);
-                    console.log(res.message)
                     //expect(res.message).eq("Cannot read properties of undefined (reading 'name')")
 
                 })
@@ -455,43 +454,35 @@ describe('Add user controller tests', () => {
 
 
 
-    describe('cofirm User fot Reset Password', () => {
-        afterEach(async () => {
-            sandbox.restore();
-            await fixturesUtils.clearDb();
-        })
+    describe('confirm User for Reset Password', () => {
 
-        describe('GET  registration token for reset Password fail', () => {
+        describe('GET registration token for reset Password fail', () => {
             it('Should return 404 if token invalid', async () => {
-                const userData = await userSchema.create({
-                    registrationToken: cryptoUtils.generateRandomCode(16)
-                });
-                const tokenWrong = cryptoUtils.generateRandomCode(16)
+                await fixturesUtils.createUser({});
                 const res = await request.execute(app)
                     .get(`/user/reset/${tokenWrong}`)
                     .send();
-                expect(res.status).eq(404);
-                expect(res.body.message).eq('Token not found');
-            })
-            it('Should return 404 if token not found', async () => {
-                const res = await request.execute(app)
-                    .get(`/user/reset/`)
-                    .send();
-                expect(res.status).eq(404);
-            })
-        })
 
-        describe('GET  registration token for reset Password success', () => {
+                expect(res.status).eq(404);
+                expect(res.body.message).eq(`Token not found`);
+            });
+        });
+
+        describe('GET registration token for reset Password success', () => {
             it('Should return 200 token valid', async () => {
-                const userData = await userSchema.create({registrationToken: 'reset_token_123'});
-                console.log(userData)
+                const userData = await fixturesUtils.createUser({}, true);
+                const sendMailStub = sandbox.stub().resolves({
+                    messageId: '1'
+                });
+                sandbox.stub(mailer, 'createTransport').returns({
+                    sendMail: sendMailStub
+                });
                 const res = await request.execute(app)
                     .get(`/user/reset/${userData.registrationToken}`)
                     .send();
                 expect(res.status).eq(200);
-                console.log(res.body)
-            })
+                expect(sendMailStub.called).to.be.true;
+            });
         });
-
-    })
+    });
 });

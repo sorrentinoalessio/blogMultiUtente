@@ -33,7 +33,6 @@ export const cofirmUserResetPassword = async (req, res) => {
     const token = req.params.token;
     try {
         const user = await verifyToken(token);
-        console.log(user)
         await mailService.sendMailNewPassword(user);
         res.status(200).send(`token verificato `);
     } catch (err) {
