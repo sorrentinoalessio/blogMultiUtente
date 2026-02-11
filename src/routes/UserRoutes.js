@@ -3,7 +3,7 @@ import { addUserValidator } from '../validators/addUserValidator.js';
 import { confirmRegistrationValidator } from '../validators/confirmRegistrationValidator.js';
 import { loginValidator } from '../validators/loginValidator.js';
 import { emailValidator } from '../validators/emailValidator.js';
-import { passwordValidator } from '../validators/passwordValidator.js';
+import { passwordValidator } from '../../src/validators/passwordValidator.js';
 import { profileBodyValidator } from '../validators/profileBodyValidator.js'
 import checkAuthorizationMiddleware from '../middlewares/checkAuthorizationMiddleware.js';
 import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
