@@ -12,7 +12,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.SWAGGER_URL || "http://localhost:3001" ,
+        url: "https://alessio-be.longwavestudio.dev/" ,
       },
     ],
     components: {
