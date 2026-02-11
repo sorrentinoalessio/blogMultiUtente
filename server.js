@@ -16,8 +16,8 @@ app.use(express.json());
 
 
 app.use(cors({
-  origin: "*", // o ['http://localhost:3000'] se vuoi restringere
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: "*", // o ['http://localhost:3001'] se vuoi restringere
+  methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 

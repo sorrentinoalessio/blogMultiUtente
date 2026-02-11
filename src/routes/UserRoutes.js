@@ -1,13 +1,13 @@
-import { addUser, confirmRegistration, login, loginPending, resetPassword, userProfile, updateProfile,cofirmUserResetPassword, newPassword } from '../controllers/userControllers/userController.js';
+import { addUser, confirmRegistration, login, loginPending, resetPassword, userProfile, updateProfile, cofirmUserResetPassword, newPassword } from '../controllers/userControllers/userController.js';
 import { addUserValidator } from '../validators/addUserValidator.js';
 import { confirmRegistrationValidator } from '../validators/confirmRegistrationValidator.js';
 import { loginValidator } from '../validators/loginValidator.js';
 import { emailValidator } from '../validators/emailValidator.js';
-import {passwordValidator } from '../validators/passwordValidator.js';
+import { passwordValidator } from '../validators/passwordValidator.js';
 import { profileBodyValidator } from '../validators/profileBodyValidator.js'
 import checkAuthorizationMiddleware from '../middlewares/checkAuthorizationMiddleware.js';
 import imageCreationMiddleware from '../middlewares/imageCreationMiddleware.js';
-import {confirmTokenValidator} from '../validators/confirmTokenResetPassValidator.js'
+import { confirmTokenValidator } from '../validators/confirmTokenResetPassValidator.js'
 
 /**
  * @swagger
@@ -217,6 +217,65 @@ import {confirmTokenValidator} from '../validators/confirmTokenResetPassValidato
  *       400:
  *         description: Errore nel caricamento
  */
+/**
+ * @swagger
+ * /user/reset/{token}:
+ *   get:
+ *     summary: Conferma token per reset password
+ *     tags:
+ *       - Utente
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Token di reset password
+ *     responses:
+ *       200:
+ *         description: Token valido
+ *       400:
+ *         description: Token non valido
+ *       404:
+ *         description: Utente non trovato
+ */
+
+/**
+ * @swagger
+ * /user/new_password/{token}:
+ *   post:
+ *     summary: Imposta nuova password
+ *     tags:
+ *       - Utente
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Token di reset password
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 example: NuovaPassword123
+ *     responses:
+ *       200:
+ *         description: Password aggiornata con successo
+ *       400:
+ *         description: Token non valido o dati non validi
+ *       404:
+ *         description: Utente non trovato
+ */
+
+
 
 
 export class UserRoutes {
@@ -230,6 +289,6 @@ export class UserRoutes {
     router.patch('/user/profile/update', checkAuthorizationMiddleware, profileBodyValidator, updateProfile);
     router.post("/user/profile/avatar/upload", checkAuthorizationMiddleware, imageCreationMiddleware);
     router.get('/user/reset/:token', confirmTokenValidator, cofirmUserResetPassword);
-    router.post('/user/new_password/:token',passwordValidator,newPassword);
+    router.post('/user/new_password/:token', passwordValidator, newPassword);
   }
 }

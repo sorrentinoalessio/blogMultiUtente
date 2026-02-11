@@ -43,10 +43,12 @@ export const getListPublicPost = async (req, res) => {
 }
 
 export const updatePostStatus = async (req, res) => {
+
     const idPost = req.params.id;
     const content = req.body;
+
     try {
-        const post = await getPostStatusUpdate(idPost, req.userId, content);
+        const post = await getPostStatusUpdate(idPost, content);
         res.status(201).json(post);
     } catch (err) {
         res.status(500).json({ message: err.message });

@@ -69,7 +69,8 @@ class UserRepository {
     async findUserForResetPassword(email) {
         try {
 
-            const user = await userSchema.findOneAndUpdate({ email: email }, { $set: { registrationToken: CryptoUtils.generateRandomCode(16) } }, { new: true });
+            const token = CryptoUtils.generateRandomCode(16);
+            const user = await userSchema.findOneAndUpdate({ email: email }, { $set: { registrationToken: token } }, { new: true });
             if (!user) {
                 throw new UnauthorizedException('Unauthorized');
             }
@@ -83,25 +84,32 @@ class UserRepository {
 
 
     async addResetPassword(password, salt, token) {
-        const res = await userSchema.findOneAndUpdate({ registrationToken: token },
-            {
-                $set: {
-                    password: password,
-                    salt: salt,
-                    registrationToken: null
-                }
+        try {
+            const res = await userSchema.findOneAndUpdate(
+                { registrationToken: token },
+                {
+                    $set: {
+                        password: password,
+                        salt: salt,
+                        registrationToken: null
+                    }
+                },
+                { new: true } 
+            );
+
+            if (!res) {
+                throw new UnauthorizedException('Unauthorized');
             }
-        ).catch((err) => {
+
+            return res.toObject();
+        } catch (err) {
             if (err.code === 11000) {
-                throw new MongoInternalException(`something went wrong`, 500);
+                throw new MongoInternalException(`Something went wrong`, 500);
             }
-            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-        });
-        if (!res) {
-        throw new UnauthorizedException('Unauthorized');
+            throw new MongoInternalException(`Something went wrong: ${err.message}`, err.code);
+        }
     }
-        return res.toObject();
-    }
+
 
     async getUserProfile(userId, status) {
         const res = await userSchema.find({ _id: userId, status: status }).catch(err => {

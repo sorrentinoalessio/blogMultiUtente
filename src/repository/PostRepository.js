@@ -59,8 +59,8 @@ class PostRepository {
     }
 
 
-    async patchPostStatus(id, userId, content) {
-        const post = await postSchema.findOneAndUpdate({ _id: id, ownerId: userId }, { $set: { status: content.status, title: content.title, description: content.description, } }, { new: true });
+    async patchPostStatus(id, content) {
+        const post = await postSchema.findOneAndUpdate({ _id: id,  }, { $set: { status: content.status, title: content.title, description: content.description, } }, { new: true });
         return post;
     }
 
