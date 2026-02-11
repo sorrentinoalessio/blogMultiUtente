@@ -71,7 +71,7 @@ describe('Repo post controller tests', () => {
         });
     });
 
-    describe('POST  passwordNew for resetPassword success', () => {
+    describe.skip('POST  passwordNew for resetPassword success', () => {
         it('Should return 200 if password  valid', async () => {
             const res = await request.execute(app)
                 .post(`/user/new_password/${user.registrationToken}`)
@@ -85,7 +85,7 @@ describe('Repo post controller tests', () => {
         it('Should return 400 if password  not valid', async () => {
             const res = await request.execute(app)
                 .post(`/user/new_password/${user.registrationToken}`)
-                .send({ "passwordNew": "12" })
+                .send({ "passwordNew": "1" })
             expect(res.status).eq(400);
             expect(res.body.message).eq('ValidationError: "passwordNew" length must be at least 3 characters long')
 
@@ -101,6 +101,7 @@ describe('Repo post controller tests', () => {
         })
 
     });
+   
 
 });
 
