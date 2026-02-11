@@ -51,6 +51,7 @@ jobs:
             export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
             export PRIVATE_KEY="${{ secrets.PRIVATE_KEY }}"
             export PUBLIC_KEY="${{ secrets.PUBLIC_KEY }}"
+            export PUBLIC_KEY="${{ secrets.SWAGGER_URL }}"
 
             # Vai nella cartella del progetto
             cd /home/ubuntu/blog/blogMultiUtente
