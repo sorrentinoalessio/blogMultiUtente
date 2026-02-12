@@ -1,0 +1,23 @@
+import { actions } from "../constants/const.js";
+import { addComment } from "../services/commentService.js";
+
+class OnConnectionMiddleware {
+    async onConnection(socket, io, next){
+        console.log('connected socket');
+        socket.on(actions.COMMENT_POST, async (comment, callback) => {
+            try {
+                if (!socket.data.loggedUser) {
+                    return callback({ error: "User not logged in" });
+                }
+                const savedComment = await addComment(comment, socket.data.loggedUser.userId);
+                callback({ result: { data: savedComment } });
+            } catch (err) {
+                callback({ error: err.message });
+            }
+        });
+        socket.emit('connected', socket.data.loggedUser);
+        next();
+    }
+}
+
+export default new OnConnectionMiddleware();
