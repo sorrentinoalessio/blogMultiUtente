@@ -71,7 +71,7 @@ describe('Repo post controller tests', () => {
         });
     });
 
-    describe.skip('POST  passwordNew for resetPassword success', () => {
+    describe('POST  passwordNew for resetPassword success', () => {
         it('Should return 200 if password  valid', async () => {
             const res = await request.execute(app)
                 .post(`/user/new_password/${user.registrationToken}`)

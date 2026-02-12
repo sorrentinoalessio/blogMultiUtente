@@ -473,6 +473,8 @@ describe('Add user controller tests', () => {
         describe('GET registration token for reset Password success', () => {
             it('Should return 200 token valid', async () => {
                 const userData = await fixturesUtils.createUser({}, true);
+
+                console.log(userData)
                 const sendMailStub = sandbox.stub().resolves({
                     messageId: '1'
                 });

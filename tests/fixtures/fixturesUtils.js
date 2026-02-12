@@ -5,6 +5,7 @@ import userSchema from '../../src/schemas/userSchema.js';
 import { postStatus, userStatus } from '../../src/constants/const.js';
 import postSchema from '../../src/schemas/postSchema.js';
 import TagUtils from '../../src/utils/TagUtils.js';
+import crypto from 'crypto';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -19,7 +20,7 @@ class FixturesUtils {
             status: data.status || userStatus.ACTIVE,
             password: password,
             salt: salt,
-            registrationToken: data.registrationToken || CryptoUtils.generateRandomCode(16)
+            registrationToken: crypto.randomBytes(16).toString('hex')
 
         }
         if (save) {

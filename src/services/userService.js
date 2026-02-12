@@ -3,6 +3,7 @@ import UnauthorizedException from '../exceptions/UnauthorizedException.js';
 import userRepo from '../repository/UserRepository.js';
 import cryptoUtils from '../utils/CryptoUtils.js';
 import mailService from './mailService.js';
+import crypto from 'crypto';
 
 const users = {};
 
@@ -10,7 +11,7 @@ export const add = async (content) => {
     const { password, salt } = cryptoUtils.hashPassword(content.password);
     content.password = password;
     content.salt = salt;
-    content.registrationToken = cryptoUtils.generateRandomCode(16)
+    content.registrationToken = crypto.randomBytes(16).toString('hex')
     const user = await userRepo.add(content);
     await mailService.sendRegistrationMail(user);
     return user;
