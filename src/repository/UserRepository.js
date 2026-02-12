@@ -4,8 +4,7 @@ import NotFoundException from "../exceptions/NotFoundException.js";
 import UnauthorizedException from "../exceptions/UnauthorizedException.js";
 import userSchema from "../schemas/userSchema.js";
 import MongoInternalException from '../exceptions/MongoInternalException.js';
-import CryptoUtils from "../utils/CryptoUtils.js";
-import { getRandomValues } from "crypto";
+import crypto from 'crypto';
 
 class UserRepository {
     async add(content) {
@@ -69,7 +68,7 @@ class UserRepository {
     async findUserForResetPassword(email) {
         try {
 
-            const token = CryptoUtils.generateRandomCode(16);
+            const token = crypto.randomBytes(16).toString('hex');
             const user = await userSchema.findOneAndUpdate({ email: email }, { $set: { registrationToken: token } }, { new: true });
             if (!user) {
                 throw new UnauthorizedException('Unauthorized');

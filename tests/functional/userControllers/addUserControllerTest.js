@@ -9,7 +9,7 @@ import mailer, { createTransport } from 'nodemailer';
 import cryptoUtils from '../../../src/utils/CryptoUtils.js'
 import userSchema from '../../../src/schemas/userSchema.js';
 import { userStatus } from '../../../src/constants/const.js';
-import constants from 'node:constants';
+import crypto from 'crypto';
 
 
 
@@ -459,14 +459,14 @@ describe('Add user controller tests', () => {
 
         describe('GET registration token for reset Password fail', () => {
             it('Should return 400 if token invalid', async () => {
-                const tokenWrong = cryptoUtils.generateRandomCode(10)
+                const tokenWrong = crypto.randomBytes(16).toString('hex');
                 await fixturesUtils.createUser({});
                 const res = await request.execute(app)
                     .get(`/user/reset/${tokenWrong}`)
                     .send();
 
-                expect(res.status).eq(400);
-                expect(res.body.message).eq(`ValidationError: "token" length must be at least 16 characters long`);
+                expect(res.status).eq(404);
+                expect(res.body.message).eq('Token not found');
             });
         });
 

@@ -1,4 +1,5 @@
-import ioClient from 'socket.io-client'
+import { io } from "socket.io-client";
+import jwtUtils from "../../src/utils/CryptoUtils.js";
 
 class SocketFixtures {
     resultSynchronizer = {
@@ -31,11 +32,14 @@ class SocketFixtures {
             });
         }
     };
-    createClient() {
-        return ioClient('http://localhost:3001/blog', {
-            transports: ['websocket'],
+    createClient(user) {
+        const token = jwtUtils.generateTokens(user);
+        return io("http://localhost:3001/blog", {
+            auth: {
+                accessToken: token.accessToken
+            },
+            transports: ["websocket"],
             autoConnect: false
-
         });
 
     }

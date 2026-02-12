@@ -1,11 +1,13 @@
+import onConnectionMiddleware from "../middlewares/OnConnectionMiddleware.js";
+import socketAuthorizationMiddleware from "../middlewares/socketAuthorizationMiddleware.js";
+
 class SocketIoInitializer {
-  constructor(io){
-    io = io.of('blog')
-    io.use(async (socket,next) =>{
-        next()
-    })
-
-
-  }  
+    constructor(io) {
+        io = io.of('blog');
+        io.use(socketAuthorizationMiddleware).use(async (socket, next) => {
+            await onConnectionMiddleware.onConnection(socket, io, next);
+        });
+    }
 }
+
 export default SocketIoInitializer;
