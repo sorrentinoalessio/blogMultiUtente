@@ -29,9 +29,7 @@ class OnConnectionMiddleware {
             }
         });
 
-
-
-        socket.emit('connected', socket.data.loggedUser);
+       socket.emit('connected', socket.data.loggedUser);
         next();
     }
 }

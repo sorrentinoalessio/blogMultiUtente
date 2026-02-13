@@ -6,12 +6,10 @@ import likeBodyValidator from "../../validators/actions/likeBodyValidator.js"
 class LikePostAction {
     #socket = null;
     #user = null;
-
     constructor(socket, user) {
         this.#socket = socket;
         this.#user = user;
     }
-
     process() {
         this.#socket.on(actions.LIKE_POST, async (data, ack) => {
             try {
@@ -25,7 +23,6 @@ class LikePostAction {
                     }
                 })
             }
-
             catch (err) {
                 ack({
                     result: {

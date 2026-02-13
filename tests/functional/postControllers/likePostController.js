@@ -29,7 +29,7 @@ describe('LIKE POST test', () => {
 
     });
 
-    describe.only('LIKE POST success', () => {
+    describe('LIKE POST success', () => {
         it('Should like post', async () => {
             const postData = await fixturesUtils.createPost({}, true);
             const like = {
