@@ -7,9 +7,10 @@ class LikeRepository {
         try {
             const res = await likeSchema.findOneAndUpdate(
                 { postId: content.postId },          
-                { $addToSet: { usersId: content.userId} }, 
+                { $addToSet: { likes: content.userId} }, 
                 { new: true, upsert: true }         
             );
+            console.log(res)
             return res.toObject();
 
         } catch (err) {
