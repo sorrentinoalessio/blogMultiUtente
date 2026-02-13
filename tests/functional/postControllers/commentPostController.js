@@ -3,12 +3,14 @@ import fixturesUtils from '../../fixtures/fixturesUtils.js';
 import SocketFixtures from '../../fixtures/SocketFixtures.js';
 import sinon from 'sinon';
 import { actions } from '../../../src/constants/const.js';
+import CommentPostAction from '../../../src/components/actions/commentPostAction.js';
 
 
 const sandbox = sinon.createSandbox();
 
 let client;
 let user;
+let commentAction;
 
 describe('COMMENT POST test', () => {
     afterEach(async () => {
@@ -25,6 +27,8 @@ describe('COMMENT POST test', () => {
         });
 
         await new Promise(resolve => client.once('connect', resolve));
+        commentAction = new CommentPostAction(client, user);
+        commentAction.process();
 
     });
 

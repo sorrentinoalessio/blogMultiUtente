@@ -4,12 +4,14 @@ import SocketFixtures from '../../fixtures/SocketFixtures.js';
 import sinon from 'sinon';
 import { actions } from '../../../src/constants/const.js';
 import { getMaxListeners } from 'events';
+import LikePostAction from '../../../src/components/actions/likePostAction.js';
 
 
 const sandbox = sinon.createSandbox();
 
 let client;
 let user;
+let likeAction;
 
 describe('LIKE POST test', () => {
     afterEach(async () => {
@@ -26,6 +28,8 @@ describe('LIKE POST test', () => {
         });
 
         await new Promise(resolve => client.once('connect', resolve));
+        likeAction = new LikePostAction(client, user);
+        likeAction.process();
 
     });
 
