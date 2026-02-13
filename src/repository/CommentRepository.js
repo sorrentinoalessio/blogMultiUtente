@@ -6,7 +6,6 @@ class CommentRepository {
     async add(content) {
         try {
             const res = await commentSchema.create(content);
-            console.log(res)
             return res.toObject();
 
         } catch (err) {

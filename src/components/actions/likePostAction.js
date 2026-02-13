@@ -1,9 +1,9 @@
 import { actions } from "../../constants/const.js";
-import { addComment } from '../../services/commentService.js';
-import commentBodyValidator from "../../validators/actions/commentBodyValidator.js"
+import { addLike } from '../../services/likeService.js';
+import likeBodyValidator from "../../validators/actions/likeBodyValidator.js"
 
 
-class CommentPostAction {
+class LikePostAction {
     #socket = null;
     #user = null;
 
@@ -11,17 +11,17 @@ class CommentPostAction {
         this.#socket = socket;
         this.#user = user;
     }
-    process() {
 
-        this.#socket.on(actions.COMMENT_POST, async (data, ack) => {
+    process() {
+        this.#socket.on(actions.LIKE_POST, async (data, ack) => {
             try {
                 const userId = this.#user.userId;
-                const validateData = commentBodyValidator.validate(data);
-                const comment = await addComment(validateData, userId);
+                const validatePostId = likeBodyValidator.validate(data);
+                const likes = await addLike(validatePostId, userId);
                 ack({
                     result: {
                         success: true,
-                        data: comment
+                        postId: likes._id.toString()
                     }
                 })
             }
@@ -34,10 +34,9 @@ class CommentPostAction {
                     }
                 })
             }
-
             return;
         })
     }
 }
 
-export default CommentPostAction;
+export default LikePostAction;
