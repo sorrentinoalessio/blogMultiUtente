@@ -1,16 +1,38 @@
 import MongoInternalException from '../exceptions/MongoInternalException.js';
 import likeSchema from "../schemas/likeSchema.js";
+import mongoose from 'mongoose';
+
 
 
 class LikeRepository {
     async add(content) {
         try {
+            const userId = new mongoose.Types.ObjectId(content.userId);
+
             const res = await likeSchema.findOneAndUpdate(
-                { postId: content.postId },          
-                { $addToSet: { likes: content.userId} }, 
-                { new: true, upsert: true , setDefaultsOnInsert: true  }         
+                { postId: content.postId },
+                [
+                    {
+                        $set: {
+                            likes: {
+                                $filter: {
+                                    input: {
+                                        $cond: [
+                                            { $in: [userId, { $ifNull: ["$likes", []] }] },
+                                            { $setDifference: [{ $ifNull: ["$likes", []] }, [userId]] },
+                                            { $concatArrays: [{ $ifNull: ["$likes", []] }, [userId]] }
+                                        ]
+                                    },
+                                    as: "value",
+                                    cond: { $ne: ["$$value", null] } // rimuove null
+                                }
+                            }
+                        }
+                    }
+                ],
+                { new: true, upsert: true }
             );
-            console.log(res)
+
             return res.toObject();
 
         } catch (err) {
