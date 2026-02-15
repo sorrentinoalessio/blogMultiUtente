@@ -6,7 +6,7 @@ const validator = createValidator({ passError: true });
 
 const bodyValidator = Joi.object({
     status: Joi.string().valid('public', 'draft', 'delete'),
-    title: Joi.string().min(3).max(256), // titolo obligatorio
+    title: Joi.string().min(3).max(256),
     description: Joi.string().min(3),
     tag: Joi.array().min(1).items(Joi.string().min(3))});
 

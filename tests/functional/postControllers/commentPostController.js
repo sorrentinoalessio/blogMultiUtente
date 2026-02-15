@@ -32,7 +32,6 @@ describe('COMMENT POST test', () => {
 
     describe('COMMENT POST success', () => {
         it('Should comment post', async () => {
-
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const comment = {
                 postId: postData._id.toString(),
@@ -50,5 +49,40 @@ describe('COMMENT POST test', () => {
             client.disconnect();
         })
     })
+
+    describe('COMMENT POST fail', () => {
+        it('Should comment post length must be at least 3 characters long ', async () => {
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const comment = {
+                postId: postData._id.toString(),
+                comment: "c"
+            }
+            const result = await new Promise((resolve, reject) => {
+                client.emit(actions.COMMENT_POST, comment, (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.error).eq('"comment" length must be at least 3 characters long')
+        client.disconnect();
+        })
+
+
+         it('Should comment post is not allowed to be empty', async () => {
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const comment = {
+                postId: postData._id.toString(),
+                comment: ""
+            }
+            const result = await new Promise((resolve, reject) => {
+                client.emit(actions.COMMENT_POST, comment, (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.error).eq('"comment" is not allowed to be empty')
+        client.disconnect();
+        })
+        
+    })
+    
 
 })
