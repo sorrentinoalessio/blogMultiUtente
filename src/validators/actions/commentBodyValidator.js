@@ -11,9 +11,7 @@ class CommentBodyValidator {
     }
 
     validate(data) {
-        const { error, value } = this.validator.validate(data);
-        if (error) throw new Error(error.details[0].message);
-        return value;
+        return this.validator.validate(data);
     }
 }
 

@@ -15,8 +15,11 @@ class CommentPostAction {
 
         this.#socket.on(actions.COMMENT_POST, async (data, ack) => {
             try {
+                console.log(data)
                 const userId = this.#user.userId;
+                console.log(userId)
                 const validateData = commentBodyValidator.validate(data);
+                console.log(validateData);
                 const comment = await addComment(validateData, userId);
                 ack({
                     result: {

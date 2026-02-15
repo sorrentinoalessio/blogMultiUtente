@@ -31,7 +31,7 @@ class LikeRepository {
                             }
                         }
                     ], 
-                    { new: true, upsert: true } // Opzioni
+                    { new: true, upsert: true } 
                 );
                 return res ? res.toObject() : null;
             } else {

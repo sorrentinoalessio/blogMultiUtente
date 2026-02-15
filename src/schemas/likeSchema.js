@@ -5,8 +5,7 @@ const likeSchema = new mongoose.Schema(
     {
         postId: {type: Schema.Types.ObjectId, default: null},
         likes: { type: [mongoose.Schema.Types.ObjectId], default: [] }
-        
-        
+              
     },
     {
         timestamps: true

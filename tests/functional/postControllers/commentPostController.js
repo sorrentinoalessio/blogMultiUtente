@@ -27,8 +27,6 @@ describe('COMMENT POST test', () => {
         });
 
         await new Promise(resolve => client.once('connect', resolve));
-        commentAction = new CommentPostAction(client, user);
-        commentAction.process();
 
     });
 
@@ -40,18 +38,15 @@ describe('COMMENT POST test', () => {
                 postId: postData._id.toString(),
                 comment: "comment new"
             }
-            await new Promise((resolve, reject) => {
+            const result = await new Promise((resolve, reject) => {
                 client.emit(actions.COMMENT_POST, comment, (data) => {
-                    if (data.error) return reject(data.error);
-                    resolve(data.result.data);
-                    expect(data.result.data._id).to.exist;
-                    expect(data.result.data.comment).eq(comment.comment);
-                    expect(data.result.data.ownerId).eq(user._id.toString());
-                    expect(data.result.data.postId).eq(postData._id.toString());
-                    resolve();
+                    resolve(data.result);
                 });
             });
-
+            expect(result.data._id).to.exist;
+            expect(result.data.comment).eq(comment.comment);
+            expect(result.data.ownerId).eq(user._id.toString());
+            expect(result.data.postId).eq(postData._id.toString());
             client.disconnect();
         })
     })
