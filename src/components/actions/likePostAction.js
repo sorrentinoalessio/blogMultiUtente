@@ -1,25 +1,25 @@
 import { actions } from "../../constants/const.js";
 import { addLike } from '../../services/likeService.js';
-import likeBodyValidator from "../../validators/actions/likeBodyValidator.js"
-
+import likeBodyValidator from "../../validators/actions/likeBodyValidator.js";
 
 class LikePostAction {
     #socket = null;
     #user = null;
+
     constructor(socket, user) {
         this.#socket = socket;
         this.#user = user;
     }
+
     process() {
-        this.#socket.on(actions.LIKE_POST, async (data, ack) => {
+          this.#socket.on(actions.LIKE_POST, async (data, ack) => {
             try {
-                const userId = this.#user.userId;
-                const validatePostId = likeBodyValidator.validate(data);
-                const likes = await addLike(validatePostId, userId);
+                const dataValidate = likeBodyValidator.validate(data);
+                const likes = await addLike(dataValidate, this.#user.userId);
                 ack({
                     result: {
                         success: true,
-                        postId: likes._id.toString()
+                        data: likes
                     }
                 })
             }
@@ -37,3 +37,5 @@ class LikePostAction {
 }
 
 export default LikePostAction;
+
+

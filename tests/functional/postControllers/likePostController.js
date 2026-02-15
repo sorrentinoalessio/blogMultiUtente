@@ -7,6 +7,7 @@ import { getMaxListeners } from 'events';
 import LikePostAction from '../../../src/components/actions/likePostAction.js';
 import { isObjectIdOrHexString } from 'mongoose';
 import mongoose from 'mongoose';
+import { console } from 'inspector';
 
 
 const sandbox = sinon.createSandbox();
@@ -14,7 +15,6 @@ const objectId = mongoose.Types.ObjectId;
 
 let client;
 let user;
-let likeAction;
 
 describe('LIKE POST test', () => {
     afterEach(async () => {
@@ -31,61 +31,94 @@ describe('LIKE POST test', () => {
         });
 
         await new Promise(resolve => client.once('connect', resolve));
-        likeAction = new LikePostAction(client, user);
-        likeAction.process();
 
     });
 
     describe('LIKE POST and UNLIKE success', () => {
         it('Should like post', async () => {
             const postData = await fixturesUtils.createPost({}, true);
-            const like = {
-                postId: postData._id.toString(),
-            }
-            await new Promise((resolve, reject) => {
-                client.emit(actions.LIKE_POST, like, (data) => {
-                    if (data.error) return reject(data.error);
-                    resolve(data.result.data);
-                    expect(data.result.data.likes[0]).eq(user._id.toString())
-                    expect(data.result.data.postId).eq(postData._id.toString())
+            const result = await new Promise((resolve) => {
+                client.emit(actions.LIKE_POST, { postId: postData._id.toString() }, (data) => {
+                    resolve(data.result);
                 });
             });
+            expect(result.success).to.be.true;
+            const likesAsStrings = result.data.likes.map(l => l.toString());
+            expect(likesAsStrings).to.include(user._id.toString());
+            expect(result.data.postId).eq(postData._id.toString());
             client.disconnect();
-        })
+        });
+
         it('Should like post if exist at least one like', async () => {
             const postData = await fixturesUtils.createPost({}, true);
-            const like = {
-                postId: postData._id.toString(),
-            }
             const likeFake = await fixturesUtils.createLikes({ postId: postData._id, likes: [new objectId()] }, true);
-            await new Promise((resolve, reject) => {
-                client.emit(actions.LIKE_POST, like, (data) => {
-                    if (data.error) return reject(data.error);
-                    resolve(data.result.data);
-                    expect(data.result.data.likes[1]).eq(user._id.toString())
-                    expect(data.result.data.postId).eq(postData._id.toString())
+            const result = await new Promise((resolve) => {
+                client.emit(actions.LIKE_POST, { postId: postData._id.toString() }, (data) => {
+                    resolve(data.result);
                 });
             });
+            expect(result.success).to.be.true;
+            expect(result.data.likes.length).eq(2)
+            expect(result.data.postId).eq(postData._id.toString())
             client.disconnect();
-        })
+        });
         it('Should unlike post if exist at least one likes with userId', async () => {
             const postData = await fixturesUtils.createPost({}, true);
-            const like = {
-                postId: postData._id.toString(),
-            }
             const likeFake = await fixturesUtils.createLikes({ postId: postData._id, likes: [user._id] }, true);
-            await new Promise((resolve, reject) => {
-                client.emit(actions.LIKE_POST, like, (data) => {
-                    if (data.error) return reject(data.error);
-                    resolve(data.result.data);
-                    expect(data.result.data.likes[0]).to.not.exist
-                    expect(data.result.data.postId).eq(postData._id.toString())
+            const result = await new Promise((resolve) => {
+                client.emit(actions.LIKE_POST, { postId: postData._id.toString() }, (data) => {
+                    resolve(data.result);
                 });
             });
+            expect(result.success).to.be.true;
+            expect(result.data.likes.length).eq(0)
+            expect(result.data.postId).eq(postData._id.toString())
             client.disconnect();
-        })
+        });
     })
 
+    describe('LIKE POST fail', () => {
+        it('Should fail if postId is missing', async () => {
+            const postData = await fixturesUtils.createPost({}, true);
+            const result = await new Promise((resolve) => {
+                client.emit(actions.LIKE_POST, {}, (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.success).to.be.false;
+            expect(result.error).to.eq('"postId" is required');
+            client.disconnect();
+        });
 
+
+        it('Should like post fail postId not string correct', async () => {
+            const postData = await fixturesUtils.createPost({}, true);
+            const result = await new Promise((resolve) => {
+                client.emit(actions.LIKE_POST, { postId: 123 }, (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.success).to.be.false;
+            expect(result.error).to.eq('"postId" must be a string');
+            client.disconnect();
+        });
+         it('Should fail if postId not find ', async () => {
+            const postData = await fixturesUtils.createPost({}, true);
+            const fakePostId = new objectId().toString();
+            const result = await new Promise((resolve) => {
+                client.emit(actions.LIKE_POST, {postId: fakePostId}, (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.success).to.be.false;
+            expect(result.error).to.eq(`Errore durante l'operazione: PostId ${fakePostId.toString()} non trovato`);
+            client.disconnect();
+        });
+
+
+
+    });
 
 })
+
+

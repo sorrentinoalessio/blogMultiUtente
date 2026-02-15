@@ -39,7 +39,7 @@ class FixturesUtils {
             tag: data.tag || [{ tag: "cinema", _id: new objectId() }],
             img: data.img
         };
-
+        
         if (save) {
             const res = await postSchema.create(post);
             return res.toObject();
@@ -52,21 +52,19 @@ class FixturesUtils {
         const likes = {
             postId: data.postId,
             likes: data.likes || []
-
         };
 
         if (save) {
-            const res = await likeSchema.create(likes);
-            return res.toObject();
+            
+           const res = await likeSchema.create(likes);
+           return res.toObject();
         }
-
         return likes;
     }
 
     async clearDb() {
         await postSchema.deleteMany();
         await userSchema.deleteMany();
-        //await mongoose.connection.dropDatabase();
     }
 
 

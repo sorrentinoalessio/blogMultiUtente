@@ -4,18 +4,17 @@ class BaseValidator {
     constructor(schema) {
         this.schema = schema;
     }
+
     validate(data) {
         const res = this.schema.validate(data);
 
-        if(res.error){
-            const [ message, code ] = res.error.details[0].message.split(':');
-             throw new BadRequestException(message, parseInt(code));
-     
+        if (res.error) {
+            const [message, code] = res.error.details[0].message.split(':');
+            throw new BadRequestException(message, parseInt(code));
         }
-             
-    }
 
+        return res.value; 
+    }
 }
-export default (schema) => {
-    return new BaseValidator(schema);
-}
+
+export default (schema) => new BaseValidator(schema);
