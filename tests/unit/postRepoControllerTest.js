@@ -81,6 +81,22 @@ describe('Repo post controller tests', () => {
             expect(res.status).eq(201);
         })
     })
+
+    describe('GET post ,comment and like public ', () => {
+        it('Should return 201 post', async () => {
+            const postData = await fixturesUtils.createPost({ status: postStatus.PUBLIC }, true);
+            const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true);
+            const like = await fixturesUtils.createLikes({ postId: postData._id, likes: [user._id] }, true);
+            const res = await request.execute(app)
+                .get(`/post/${postData._id}`)
+                .set('Authorization', `Bearer ${token}`)
+                
+            expect(res.status).eq(201);
+            console.log(res.body)
+        })
+    })
+
+
     describe('PATCH post update status success', () => {
         it('Should return status 201', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
@@ -95,7 +111,7 @@ describe('Repo post controller tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .send(bodyUpdateStatus)
             expect(res.status).eq(201);
-             expect(res.body.status).eq('public');
+            expect(res.body.status).eq('public');
             expect(res.body.title).eq('nuovo titolo update');
             expect(res.body.description).eq('nuova descrizione update');
             expect(res.body.tag[0].tag).to.equal('cinema');
@@ -160,7 +176,7 @@ describe('Repo post controller tests', () => {
     describe('GET tag by postId and userId succes', () => {
 
         it('Should return 201 if tag found', async () => {
-            const postData = await fixturesUtils.createPost({ ownerId: user._id  }, true);
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const res = await request.execute(app)
                 .get(`/user/tag/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)
@@ -170,17 +186,17 @@ describe('Repo post controller tests', () => {
     })
 
     describe('DELETE tag from post success', () => {
-    it('Should return status 200/201 and remove the tag', async () => {
-        const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
-        const idTag = postData.tag[0]._id.toString();
-        const postId = postData._id.toString();
-           const res = await request.execute(app)
-            .patch(`/user/tag/delete/${idTag}`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({postId });
-        expect(res.status).eq(201) 
-        expect(res.body.tag).to.have.lengthOf(postData.tag.length - 1);
+        it('Should return status 200/201 and remove the tag', async () => {
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const idTag = postData.tag[0]._id.toString();
+            const postId = postData._id.toString();
+            const res = await request.execute(app)
+                .patch(`/user/tag/delete/${idTag}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ postId });
+            expect(res.status).eq(201)
+            expect(res.body.tag).to.have.lengthOf(postData.tag.length - 1);
+        });
     });
-});
-   
+
 })

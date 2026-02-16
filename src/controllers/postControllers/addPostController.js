@@ -1,5 +1,5 @@
 
-import { addPost, getPostsById, getPost, getPostsPublic, getPostStatusUpdate } from '../../services/postService.js';
+import { addPost, getPostsById, getPost, getPostsPublic, getPostStatusUpdate ,getPostPublic } from '../../services/postService.js';
 import TagUtils from '../../utils/TagUtils.js';
 
 export const createPost = async (req, res) => {
@@ -33,14 +33,25 @@ export const getPostByIdPostAndUserId = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
-export const getListPublicPost = async (req, res) => {
+export const getListPublicPosts = async (req, res) => {
     try {
-        const listPostPublic = await getPostsPublic();
+        const listPostsPublic = await getPostsPublic();
+        res.status(201).json(listPostsPublic);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+export const getListPublicPost = async (req, res) => {
+    const {id} = req.params
+    try {
+        const listPostPublic = await getPostPublic(id);
         res.status(201).json(listPostPublic);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 }
+
 
 export const updatePostStatus = async (req, res) => {
 

@@ -33,6 +33,10 @@ export const getPostsPublic = async () => {
     return postRepo.getPostsStatus();
 }
 
+export const getPostPublic = async (postId) => {
+    return postRepo.getPostStatusDetails(postId);
+}
+
 export const getPostStatusUpdate = async (id,content) => {
     if (content.tag) {
             content.tag = await TagUtils.createTagUtils(content.tag)

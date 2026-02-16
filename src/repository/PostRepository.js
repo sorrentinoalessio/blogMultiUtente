@@ -2,6 +2,8 @@ import { postStatus } from '../constants/const.js';
 import MongoInternalException from '../exceptions/MongoInternalException.js';
 import postSchema from "../schemas/postSchema.js";
 import tagSchemas from "../schemas/tagSchema.js";
+import commentSchema from "../schemas/commentSchema.js";
+import likeSchema from "../schemas/likeSchema.js";
 
 
 class PostRepository {
@@ -14,7 +16,7 @@ class PostRepository {
 
     async tag(listTag) {
         try {
-            const tagExisting = await tagSchemas.find({nameTag: { $in: listTag }});
+            const tagExisting = await tagSchemas.find({ nameTag: { $in: listTag } });
             const nameTags = tagExisting.map(t => t.nameTag);// estrai i nomi dei tag esistenti
             // 2. crea solo quelli mancanti
             const toCreate = listTag.filter(tag => !nameTags.includes(tag)).map(tag => ({ nameTag: tag }));//
@@ -43,14 +45,14 @@ class PostRepository {
     }
 
     async deleteTagsByPostId(postId, userId, idTag) {
-    const post = await postSchema.findOneAndUpdate( { _id: postId.toString(), ownerId: userId },{ $pull: { tag: { _id: idTag } } },{ new: true });
-    if (!post) {
-             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
+        const post = await postSchema.findOneAndUpdate({ _id: postId.toString(), ownerId: userId }, { $pull: { tag: { _id: idTag } } }, { new: true });
+        if (!post) {
+            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
+        }
+        return post;
     }
-    return post; 
-}
 
-async getByPostsId(userId) {
+    async getByPostsId(userId) {
 
         const post = await postSchema.find({ ownerId: userId });
         return post;
@@ -64,11 +66,23 @@ async getByPostsId(userId) {
     async getPostsStatus() {
         const posts = await postSchema.find({ status: postStatus.PUBLIC });
         return posts.map((item) => item.toObject());
+
+    }
+    async getPostStatusDetails(postId) {
+            const [post, comments, likes] = await Promise.all([
+            postSchema.findOne({ _id: postId, status: postStatus.PUBLIC }),
+            commentSchema.find({ postId: postId }),
+            likeSchema.findOne({ postId: postId })
+        ]);
+          if (!post) {
+            return null;
+        }
+        return {...post.toObject(), comments: comments.map(c => c.toObject()), likes: likes ? likes.toObject() : { likes: [], likesCount: 0 }};
     }
 
 
     async patchPostStatus(id, content) {
-        const post = await postSchema.findOneAndUpdate({ _id: id,  }, { $set: { status: content.status, title: content.title, description: content.description },$push: { tag: content.tag } }, { new: true });
+        const post = await postSchema.findOneAndUpdate({ _id: id, }, { $set: { status: content.status, title: content.title, description: content.description }, $push: { tag: content.tag } }, { new: true });
         return post;
     }
 
