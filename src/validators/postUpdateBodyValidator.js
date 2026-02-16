@@ -5,7 +5,7 @@ const createValidator = expressJoi.createValidator;
 const validator = createValidator({ passError: true });
 
 const bodyValidator = Joi.object({
-    status: Joi.string().valid('public', 'draft', 'delete'),
+    status: Joi.string().valid('public', 'draft', 'delete','archived'),
     title: Joi.string().min(3).max(256),
     description: Joi.string().min(3),
     tag: Joi.array().min(1).items(Joi.string().min(3))});

@@ -9,8 +9,7 @@ export const postStatus = {
 export const userStatus = {
   ACTIVE: 'active',
   PENDING: 'pending',
-  DELETED: 'deleted',
-  ARCHIVED: 'archived'
+  DELETED: 'deleted'
 }
 
 export const privateKey = process.env.PRIVATE_KEY

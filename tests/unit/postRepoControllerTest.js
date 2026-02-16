@@ -92,7 +92,6 @@ describe('Repo post controller tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 
             expect(res.status).eq(201);
-            console.log(res.body)
         })
     })
 
@@ -130,20 +129,20 @@ describe('Repo post controller tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .send(bodyUpdateStatus)
             expect(res.status).eq(400);
-            expect(res.body.message).eq('ValidationError: "status" must be one of [public, draft, delete]. "status" is not allowed to be empty');
+            expect(res.body.message).eq('ValidationError: "status" must be one of [public, draft, delete, archived]. "status" is not allowed to be empty');
 
         })
         it('Should return status 400 for status not [public, draft, delete] ', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const bodyUpdateStatus = {
-                status: 'archived'
+                status: 'fakeStatus'
             }
             const res = await request.execute(app)
                 .patch(`/user/post/update/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(bodyUpdateStatus)
             expect(res.status).eq(400);
-            expect(res.body.message).eq('ValidationError: "status" must be one of [public, draft, delete]');
+            expect(res.body.message).eq('ValidationError: "status" must be one of [public, draft, delete, archived]');
 
         })
     })
