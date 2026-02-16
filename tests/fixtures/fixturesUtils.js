@@ -7,6 +7,7 @@ import postSchema from '../../src/schemas/postSchema.js';
 import TagUtils from '../../src/utils/TagUtils.js';
 import crypto from 'crypto';
 import likeSchema from '../../src/schemas/likeSchema.js';
+import commentSchema from '../../src/schemas/commentSchema.js';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -60,6 +61,22 @@ class FixturesUtils {
            return res.toObject();
         }
         return likes;
+    }
+
+
+    async createComment(data = {}, save = true) {
+        const comment = {
+            postId: data.postId,
+            comment: data.comment || "commento post",
+            ownerId: data.ownerId
+        };
+
+        if (save) {
+            
+           const res = await commentSchema.create(comment);
+           return res.toObject();
+        }
+        return comment;
     }
 
     async clearDb() {

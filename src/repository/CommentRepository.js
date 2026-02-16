@@ -21,8 +21,7 @@ class CommentRepository {
     async list(userId) {
         try {
              const res = await commentSchema.find({ownerId: userId});
-             console.log(res)
-              return res ? res.toObject() : null;
+              return res 
         } catch (err) {
             console.error("Errore CommentRepository:", err);
              if (err instanceof MongoInternalException) throw err;

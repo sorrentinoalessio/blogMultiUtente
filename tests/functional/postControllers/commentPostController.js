@@ -83,20 +83,20 @@ describe('COMMENT POST test', () => {
     describe.only('COMMENT POST list success', () => {
         it('Should list comment post', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
+            const comment2 = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
+            const comment3 = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
             const result = await new Promise((resolve, reject) => {
-                client.emit(actions.COMMENT_LIST, (data) => {
+                client.emit(actions.COMMENT_LIST, user._id , (data) => {
                     resolve(data.result);
                 });
             });
-            //expect(result.data._id).to.exist;
-            //expect(result.data.comment).eq(comment.comment);
-            //expect(result.data.ownerId).eq(user._id.toString());
-            //expect(result.data.postId).eq(postData._id.toString());
+            expect(result.data.length).eq(3);
+            expect(result.data[0].ownerId.toString()).eq(user._id.toString());
+            expect(result.data[1].ownerId.toString()).eq(user._id.toString());
+            expect(result.data[2].ownerId.toString()).eq(user._id.toString());
             client.disconnect();
         })
     })
-
-
-
 
 })
