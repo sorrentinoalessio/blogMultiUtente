@@ -59,11 +59,11 @@ describe('COMMENT POST test', () => {
                 });
             });
             expect(result.error).eq('"comment" length must be at least 3 characters long')
-        client.disconnect();
+            client.disconnect();
         })
 
 
-         it('Should comment post is not allowed to be empty', async () => {
+        it('Should comment post is not allowed to be empty', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const comment = {
                 postId: postData._id.toString(),
@@ -75,10 +75,28 @@ describe('COMMENT POST test', () => {
                 });
             });
             expect(result.error).eq('"comment" is not allowed to be empty')
-        client.disconnect();
+            client.disconnect();
         })
-        
+
     })
-    
+
+    describe.only('COMMENT POST list success', () => {
+        it('Should list comment post', async () => {
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const result = await new Promise((resolve, reject) => {
+                client.emit(actions.COMMENT_LIST, (data) => {
+                    resolve(data.result);
+                });
+            });
+            //expect(result.data._id).to.exist;
+            //expect(result.data.comment).eq(comment.comment);
+            //expect(result.data.ownerId).eq(user._id.toString());
+            //expect(result.data.postId).eq(postData._id.toString());
+            client.disconnect();
+        })
+    })
+
+
+
 
 })

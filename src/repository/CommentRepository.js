@@ -17,6 +17,18 @@ class CommentRepository {
             throw new MongoInternalException(`Errore creazione commento: ${err.message}`, err.code || 500);
         }
     }
+
+    async list(userId) {
+        try {
+             const res = await commentSchema.find({ownerId: userId});
+             console.log(res)
+              return res ? res.toObject() : null;
+        } catch (err) {
+            console.error("Errore CommentRepository:", err);
+             if (err instanceof MongoInternalException) throw err;
+            throw new MongoInternalException(`Errore creazione commento: ${err.message}`, err.code || 500);
+        }
+    }
 }
 
 export default new CommentRepository();

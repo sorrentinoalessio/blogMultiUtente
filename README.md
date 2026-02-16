@@ -37,7 +37,7 @@ Sistema backend professionale costruito con **Node.js**, **Express**, **MongoDB*
 
 | Metodo | Endpoint | Descrizione | Middleware / Validatore |
 | :--- | :--- | :--- | :--- |
-| **POST** | `/user/post/create` | Crea Post | `postBodyValidator` |
+| **POST** | `/user/post/create` | Crea Post | `postBodyValidator` | 
 | **GET** | `/user/post/` | Post dell'utente | `checkAuthorizationMiddleware` |
 | **GET** | `/user/post/:id` | Dettaglio post utente | `postIdParamValidator` |
 | **GET** | `/post/` | **Elenco pubblico** | *Accesso Libero* |

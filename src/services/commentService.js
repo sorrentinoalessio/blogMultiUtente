@@ -8,5 +8,10 @@ export const addComment = async (content, userId) => {
     
 }
 
+export const listComment = async (userId) => {
+        return await commentRepo.list(userId)
+    
+}
+
 
 
