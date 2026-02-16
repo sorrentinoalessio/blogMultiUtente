@@ -30,8 +30,6 @@ describe('LIKE POST test', () => {
             console.error("Connect error:", err.message);
         });
 
-        await new Promise(resolve => client.once('connect', resolve));
-
     });
 
     describe('LIKE POST and UNLIKE success', () => {
