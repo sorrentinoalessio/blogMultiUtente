@@ -42,7 +42,7 @@ Sistema backend professionale costruito con **Node.js**, **Express**, **MongoDB*
 | **GET** | `/user/post/:id` | Dettaglio post utente | `postIdParamValidator` |
 | **GET** | `/post/` | **Elenco pubblico** | *Accesso Libero* |
 | **GET** | `/user/tag/:id` | Tag di un post | `postIdParamValidator` |
-| **PATCH** | `/user/post/status/:id` | Modifica stato/post | `postUpdateBodyValidator` |
+| **PATCH** | `/user/post/update/:id` | Modifica stato/post | `postUpdateBodyValidator` |
 
 
 

@@ -42,8 +42,18 @@ class PostRepository {
         return tagsByPost;
     }
 
+    async deleteTagsByPostId(postId, userId, idTag) {
+        console.log(postId,userId, idTag)
+    const post = await postSchema.findOneAndUpdate( { _id: postId.toString(), ownerId: userId },{ $pull: { tag: { _id: idTag } } },{ new: true });
+    console.log(post)
+    if (!post) {
+             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
+    }
+    return post; 
+}
 
-    async getByPostsId(userId) {
+async getByPostsId(userId) {
+
         const post = await postSchema.find({ ownerId: userId });
         return post;
     }
@@ -60,13 +70,11 @@ class PostRepository {
 
 
     async patchPostStatus(id, content) {
-        const post = await postSchema.findOneAndUpdate({ _id: id,  }, { $set: { status: content.status, title: content.title, description: content.description, } }, { new: true });
+        const post = await postSchema.findOneAndUpdate({ _id: id,  }, { $set: { status: content.status, title: content.title, description: content.description },$push: { tag: content.tag } }, { new: true });
         return post;
     }
 
-    
-
-    }
+}
 
 export default new PostRepository();
 

@@ -1,5 +1,5 @@
 import postRepo from '../repository/PostRepository.js';
-
+import TagUtils from '../../src/utils/TagUtils.js'
 
 
 export const addPost = async (content, userId) => {
@@ -17,6 +17,10 @@ export const getPostById = async (id, userId) => {
     return postRepo.getTagsByPostId(id, userId);
 }
 
+export const deletePostById = async (id, userId,idTag) => {
+    return postRepo.deleteTagsByPostId(id, userId,idTag);
+}
+
 export const getPostsById = async (userId) => {
     return postRepo.getByPostsId(userId);
 }
@@ -30,6 +34,9 @@ export const getPostsPublic = async () => {
 }
 
 export const getPostStatusUpdate = async (id,content) => {
+    if (content.tag) {
+            content.tag = await TagUtils.createTagUtils(content.tag)
+        }
     return postRepo.patchPostStatus(id, content);
 }
 

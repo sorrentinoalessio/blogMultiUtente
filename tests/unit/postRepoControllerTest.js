@@ -85,14 +85,21 @@ describe('Repo post controller tests', () => {
         it('Should return status 201', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const bodyUpdateStatus = {
-                status: 'public'
+                status: 'public',
+                title: 'nuovo titolo update',
+                description: 'nuova descrizione update',
+                tag: ['tecnologia']
             }
             const res = await request.execute(app)
-                .patch(`/user/post/status/${postData._id}`)
+                .patch(`/user/post/update/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(bodyUpdateStatus)
             expect(res.status).eq(201);
-
+             expect(res.body.status).eq('public');
+            expect(res.body.title).eq('nuovo titolo update');
+            expect(res.body.description).eq('nuova descrizione update');
+            expect(res.body.tag[0].tag).to.equal('cinema');
+            expect(res.body.tag[1].tag).to.equal('tecnologia');
         })
     })
     describe('PATCH post update status fail body status empty or not [public, draft, delete]  ', () => {
@@ -103,7 +110,7 @@ describe('Repo post controller tests', () => {
             }
 
             const res = await request.execute(app)
-                .patch(`/user/post/status/${postData._id}`)
+                .patch(`/user/post/update/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(bodyUpdateStatus)
             expect(res.status).eq(400);
@@ -116,7 +123,7 @@ describe('Repo post controller tests', () => {
                 status: 'archived'
             }
             const res = await request.execute(app)
-                .patch(`/user/post/status/${postData._id}`)
+                .patch(`/user/post/update/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(bodyUpdateStatus)
             expect(res.status).eq(400);
@@ -161,4 +168,20 @@ describe('Repo post controller tests', () => {
         })
 
     })
+
+    describe('DELETE tag from post success', () => {
+    it('Should return status 200/201 and remove the tag', async () => {
+        const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+        const idTag = postData.tag[0]._id.toString();
+        const postId = postData._id.toString();
+           const res = await request.execute(app)
+            .patch(`/user/tag/delete/${idTag}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({postId });
+            console.log(res.body) 
+        expect(res.status).eq(201) 
+        expect(res.body.tag).to.have.lengthOf(postData.tag.length - 1);
+    });
+});
+   
 })
