@@ -12,4 +12,3 @@ const bodyValidator = Joi.object({
 
 export const addUserValidator = validator.body(bodyValidator);
 
-//.pattern(/^(?=(.*[A-Z]))(?=(.*[!@#$%^&*]))(?=(.*\d))[A-Za-z\d!@#$%^&*]{8,}$/) //8 caratteri|1 speciale|1 lett maiusc|1 num
