@@ -43,9 +43,7 @@ class PostRepository {
     }
 
     async deleteTagsByPostId(postId, userId, idTag) {
-        console.log(postId,userId, idTag)
     const post = await postSchema.findOneAndUpdate( { _id: postId.toString(), ownerId: userId },{ $pull: { tag: { _id: idTag } } },{ new: true });
-    console.log(post)
     if (!post) {
              throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
     }

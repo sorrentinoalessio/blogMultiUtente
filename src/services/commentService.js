@@ -13,5 +13,10 @@ export const listComment = async (userId) => {
     
 }
 
+export const deleteComment = async (userId,data) => {
+        return await commentRepo.deleteCommentbyData(userId,data)
+    
+}
+
 
 

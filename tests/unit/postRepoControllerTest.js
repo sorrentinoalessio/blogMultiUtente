@@ -178,7 +178,6 @@ describe('Repo post controller tests', () => {
             .patch(`/user/tag/delete/${idTag}`)
             .set('Authorization', `Bearer ${token}`)
             .send({postId });
-            console.log(res.body) 
         expect(res.status).eq(201) 
         expect(res.body.tag).to.have.lengthOf(postData.tag.length - 1);
     });

@@ -12,7 +12,7 @@ class LikeRepository {
             if (postVerify) {
                 const res = await likeSchema.findOneAndUpdate(
                     { postId: content.postId },
-                    [ 
+                    [
                         {
                             $set: {
                                 likes: {
@@ -25,20 +25,19 @@ class LikeRepository {
                             }
                         },
                         {
-                            
+
                             $set: {
                                 likesCount: { $size: "$likes" }
                             }
                         }
-                    ], 
-                    { new: true, upsert: true } 
+                    ],
+                    { new: true, upsert: true }
                 );
                 return res ? res.toObject() : null;
             } else {
                 throw new MongoInternalException(`PostId ${content.postId} non trovato`, 404);
             }
         } catch (err) {
-            console.error("Errore LikeRepository:", err);
             throw new MongoInternalException(`Errore durante l'operazione: ${err.message}`, err.code);
         }
 

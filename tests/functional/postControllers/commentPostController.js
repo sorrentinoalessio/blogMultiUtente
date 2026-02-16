@@ -87,7 +87,7 @@ describe('COMMENT POST test', () => {
             const comment2 = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
             const comment3 = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
             const result = await new Promise((resolve, reject) => {
-                client.emit(actions.COMMENT_LIST, user._id , (data) => {
+                client.emit(actions.COMMENT_LIST, user._id, (data) => {
                     resolve(data.result);
                 });
             });
@@ -97,6 +97,51 @@ describe('COMMENT POST test', () => {
             expect(result.data[2].ownerId.toString()).eq(user._id.toString());
             client.disconnect();
         })
+
+         it('Should list comment post object void', async () => {
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
+            const comment2 = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
+            const comment3 = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
+            const result = await new Promise((resolve, reject) => {
+                client.emit(actions.COMMENT_LIST, {}, (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.status).eq(201);
+            client.disconnect();
+        })
     })
+
+    describe('COMMENT Delete success', () => {
+        it('Should delete comment post', async () => {
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
+            const result = await new Promise((resolve, reject) => {
+                client.emit(actions.COMMENT_DELETE, comment._id.toString(), (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.status).eq(201)
+            expect(result.data.ownerId.toString()).eq(user._id.toString());
+            expect(result.data._id.toString()).eq(comment._id.toString());
+            expect(result.data.postId.toString()).eq(postData._id.toString());
+            client.disconnect();
+        })
+    })
+     describe('COMMENT Delete fail', () => {
+     it('Should delete comment post', async () => {
+            const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
+            const result = await new Promise((resolve, reject) => {
+                client.emit(actions.COMMENT_DELETE, {}, (data) => {
+                    resolve(data.result);
+                });
+            });
+            expect(result.status).eq(404)
+            client.disconnect();
+        })
+    })
+
 
 })
