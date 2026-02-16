@@ -80,7 +80,7 @@ describe('COMMENT POST test', () => {
 
     })
 
-    describe.only('COMMENT POST list success', () => {
+    describe('COMMENT POST list success', () => {
         it('Should list comment post', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
