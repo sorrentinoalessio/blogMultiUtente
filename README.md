@@ -1,78 +1,117 @@
-# 📝 Blog Multi-Utente API & Real-time
+# Blog Multi-Utente API & Real-time
 
-Sistema backend professionale costruito con **Node.js**, **Express**, **MongoDB** e **Socket.io**. Gestisce il ciclo di vita dell'utente, la pubblicazione di contenuti e le interazioni social istantanee.
-
-
+Sistema backend costruito con **Node.js**, **Express**, **MongoDB** e **Socket.io**. Gestisce il ciclo di vita dell'utente, la pubblicazione di contenuti e commenti e like istantanei.
 
 ---
 
-## 🚀 Caratteristiche Principali
+## 🔗 Repository GitHub
+> **URL:** https://github.com/sorrentinoalessio/blogMultiUtente/
+
+---
+
+## Caratteristiche Principali
 
 * **Autenticazione**: Registrazione, Login JWT, conferma account via email e recupero password.
-* **Gestione Post**: CRUD completo con supporto a tag, stati (`public`, `draft`, `delete`) e validazione degli ID.
-* **Real-time engine**: Like e Commenti gestiti tramite classi `Action` asincrone e WebSockets.
-* **Media Management**: Upload di avatar personalizzati con rinomina univoca e gestione automatica del filesystem.
-* **Validazione Dati**: Protezione totale tramite schemi **Joi** (Body, Params, Query).
+* **Gestione Post**: CRUD completo con supporto a tag, stati (public, draft, delete, archived) e validazione degli ID.
+* **Real-time engine**: Like e Commenti gestiti tramite classi Action asincrone e WebSockets.
+* **Media Management**: Upload di avatar personalizzati con rinomina univoca.
+* **Validazione Dati**: Protezione totale tramite schemi Joi (Body, Params, Query).
 * **CI/CD Pipeline**: Testing automatico e deploy continuo su AWS tramite GitHub Actions.
 
 ---
 
-## 📋 Documentazione API (REST)
+## 🚀 Installazione e Avvio Locale
 
-### 🔐 Autenticazione e Profilo
-| Metodo | Endpoint | Descrizione | Validazione Joi |
-| :--- | :--- | :--- | :--- |
-| **POST** | `/user` | Registrazione | `name`(3+), `email`, `pwd`(3+) |
-| **GET** | `/user/:id/confirm/:token` | Conferma Account | `id`(24 hex), `token`(16 char) |
-| **POST** | `/user/login` | Login | `email`, `password` |
-| **PATCH** | `/user/profile/update` | Aggiorna Nome | `profileBodyValidator` |
-| **POST** | `/user/profile/avatar/upload` | Upload Avatar | `imageCreationMiddleware` |
-| **POST** | `/user/reset_password` | Richiesta Reset | `email` valida |
-| **POST** | `/user/new_password/:token` | Nuova Password | `passwordNew`(3+) |
-
-
-
-### ✍️ Gestione Post (`PostRoutes`)
-*Le rotte private richiedono l'header `Authorization: Bearer <token>`.*
-
-| Metodo | Endpoint | Descrizione | Middleware / Validatore |
-| :--- | :--- | :--- | :--- |
-| **POST** | `/user/post/create` | Crea Post | `postBodyValidator` | 
-| **GET** | `/user/post/` | Post dell'utente | `checkAuthorizationMiddleware` |
-| **GET** | `/user/post/:id` | Dettaglio post utente | `postIdParamValidator` |
-| **GET** | `/post/` | **Elenco pubblico** | *Accesso Libero* |
-| **GET** | `/user/tag/:id` | Tag di un post | `postIdParamValidator` |
-| **PATCH** | `/user/post/update/:id` | Modifica stato/post | `postUpdateBodyValidator` |
-
-
+1. Clona la repository.
+2. Installa le dipendenze:
+   npm install
+3. Configura il file .env.
+4. Avvia il server:
+   npm start
 
 ---
 
-## 🔌 Interazioni Real-time (Socket.io)
+## 📖 Documentazione Interattiva (Swagger)
 
-Il sistema gestisce le interazioni social tramite eventi socket autenticati. Le logiche sono incapsulate in classi `Action`.
+Il progetto utilizza **Swagger (OpenAPI 3.0)** per mappare gli endpoint e testare i CRUD.
 
-* **Handshake**: Autenticazione obbligatoria tramite token JWT nell'handshake.
-* **Azioni supportate**:
-    * `LIKE_POST`: Toggle atomico del "Mi piace". Validato da `LikeBodyValidator`.
-    * `COMMENT_POST`: Invio commenti (min 3 char). Validato da `CommentBodyValidator`.
+### Accesso
+Una volta avviato il server localmente, la documentazione è raggiungibile a:
+> **URL:** http://127.0.0.1:3001/api-docs
 
-
+### Come testare le rotte protette (JWT)
+1. Esegui la chiamata POST /user/login.
+2. Copia il token ricevuto.
+3. Clicca su "Authorize" (icona lucchetto) in alto a destra.
+4. Incolla il token (formato: Bearer <tuo_token>) e conferma.
 
 ---
 
-## 🚢 Deploy e CI/CD
+## 🔐 Configurazione Environment (.env)
 
-### Pipeline GitHub Actions
-Il file `.github/workflows/main.yml` automatizza:
-1.  **Test**: Esecuzione suite Mocha/Chai con `MongoMemoryServer`.
-2.  **Deploy**: Connessione SSH su AWS, `git pull`, aggiornamento `.env` e reload tramite **PM2**.
+Crea un file .env nella root del progetto:
 
-### Configurazione Nginx
-```nginx
-location / {
-    proxy_pass http://localhost:3001;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+MAIL_USER=""
+MAIL_PASSWORD=""
+PRIVATE_KEY=''
+PUBLIC_KEY=''
+
+---
+
+## 🛡️ Repository Secrets (GitHub Actions)
+Configura queste variabili in **Settings > Secrets and variables > Actions** per il deploy automatico su AWS:
+
+* AWS_HOST          -> Indirizzo IP/Host del server
+* AWS_SSH_KEY       -> Chiave privata (.pem) per accesso SSH
+* MAIL_USER         -> Email per invio notifiche
+* MAIL_PASSWORD     -> App Password email
+* MONGODB_URI       -> Stringa connessione DB
+* PRIVATE_KEY       -> Chiave privata firma JWT
+* PUBLIC_KEY        -> Chiave pubblica verifica JWT
+* SWAGGER_URL       -> URL Swagger (es. https://alessio-be.longwavestudio.dev/api-docs)
+
+---
+
+## 🧪 Testing & Code Coverage
+
+npm install
+npm test          # Esegue i test (Mocha/Chai)
+npm run coverage  # Genera report di copertura (C8)
+
+---
+
+## 🌐 Configurazione Nginx (Reverse Proxy)
+
+Configurazione per il dominio **alessio-be.longwavestudio.dev** con supporto WebSocket e CORS:
+
+server {
+    server_name alessio-be.longwavestudio.dev;
+    root /usr/local/repos/todolist-be;
+    index index.html;
+
+    add_header "Access-Control-Allow-Origin" "*" always;
+    add_header "Access-Control-Allow-Methods" "PUT, POST, PATCH, DELETE, GET, OPTIONS, HEAD" always;
+
+    if ($request_method = "OPTIONS") {
+        return 204;
+    }
+
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    listen 443;
 }
+
+---
+
+## Deploy CI/CD (GitHub Actions)
+Il workflow automatizza:
+1. Setup e **npm install**.
+2. Esecuzione Test.
+3. Deploy SSH su AWS: git pull, aggiornamento env e restart con PM2.

@@ -117,7 +117,7 @@ describe('Repo post controller tests', () => {
             expect(res.body.tag[1].tag).to.equal('tecnologia');
         })
     })
-    describe('PATCH post update status fail body status empty or not [public, draft, delete]  ', () => {
+    describe('PATCH post update status fail body status empty or not [public, draft, delete,archived]  ', () => {
         it('Should return status 400 is body is empty', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const bodyUpdateStatus = {
@@ -132,7 +132,7 @@ describe('Repo post controller tests', () => {
             expect(res.body.message).eq('ValidationError: "status" must be one of [public, draft, delete, archived]. "status" is not allowed to be empty');
 
         })
-        it('Should return status 400 for status not [public, draft, delete] ', async () => {
+        it('Should return status 400 for status not [public, draft, delete, archived] ', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const bodyUpdateStatus = {
                 status: 'fakeStatus'

@@ -16,7 +16,7 @@ const transport = {
 
 class MailService {
     async sendRegistrationMail(user) {
-        const link = `https://alessio-be.longwavestudio.dev/user/${user._id}/confirm/${encodeURIComponent(user.registrationToken)}`;
+        const link = `http://127.0.0.1:3001/user/${user._id}/confirm/${encodeURIComponent(user.registrationToken)}`;
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: user.email,
@@ -27,7 +27,7 @@ class MailService {
         return await mailer.createTransport(transport).sendMail(mailData);
     }
      async sendMailLinkPassRecovery(user) {
-        const link = `https://alessio-be.longwavestudio.dev/user/reset/${encodeURIComponent(user.registrationToken)}`;
+        const link = `http://127.0.0.1:3001/user/reset/${encodeURIComponent(user.registrationToken)}`;
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: user.email,
@@ -39,7 +39,7 @@ class MailService {
     }
 
 async sendMailNewPassword(user) {
-     const link = `https://alessio-be.longwavestudio.dev/user/new_password/${user.registrationToken}`;
+     const link = `http://127.0.0.1:3001/user/new_password/${user.registrationToken}`;
            const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: user.email,

@@ -3,10 +3,8 @@ module.exports = {
     apps: [{
         name: 'BLOG',
         script: 'server.js',
-        //instances: 1,
-        //exec_mode: 'cluster',
         watch: false,
-        ignore_watch: ['node_modules', 'coverage','logs'],
+        ignore_watch: ['node_modules', 'coverage', 'logs'],
         env: {
             NODE_ENV: 'development',
             PORT: 8000

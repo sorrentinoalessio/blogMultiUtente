@@ -7,7 +7,7 @@ const validator = createValidator({ passError: true });
 const bodyValidator = Joi.object({
     title: Joi.string().required().min(3).max(256), // titolo obligatorio
     description: Joi.string().required().min(3),// descrizione obligatorio
-    status: Joi.string().valid('public', 'draft').default('draft'),// status di default mette draft, se messo prende solo public o draft
+    status: Joi.string().valid('public', 'draft','delete','archived').default('draft'),// status di default mette draft
     datePost: Joi.date(), // mette data creazione post se non inviato
     tag: Joi.array().items(Joi.string().min(3).max(24)), // tag come array di stringhe
     imagePost: Joi.string()

@@ -197,12 +197,27 @@ paths:
         '200': { content: { application/json: { schema: { $ref: '#/components/schemas/UserNormalized' } } } }
 
   /user/profile/avatar/upload:
-    post:
-      summary: Caricamento Avatar (imageCreationMiddleware)
-      tags: [Profile]
-      security: [{ bearerAuth: [] }]
+    post: # <--- DEVE ESSERE RIENTRATO RISPETTO ALLA ROTTA SOPRA
+      summary: Caricamento Avatar
+      tags: 
+        - Profile
+      security: 
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                uploadedFile: 
+                  type: string
+                  format: binary
+                  description: Seleziona l'immagine da caricare
       responses:
-        '200': { description: "Avatar caricato" }
+        '200':
+          description: Avatar caricato con successo
+        '400':
+          description: Errore nel caricamento (file mancante o formato errato)
 
   # ================= USER POSTS (Privati) =================
   /user/post/create:
@@ -279,6 +294,10 @@ paths:
       tags: [Tags]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ObjectId' }]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, required: [postId], properties: { postId: { type: string } } }
       responses:
         '200': { description: "Tag eliminato" }
 

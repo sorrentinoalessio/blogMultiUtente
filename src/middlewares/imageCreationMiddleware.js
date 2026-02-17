@@ -1,4 +1,4 @@
-import multer from "multer"; 
+import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
@@ -18,25 +18,22 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, req.userId +'.jpg');
+    cb(null, req.userId + '.jpg');
   }
 });
 
 const upload = multer({ storage });
 
 export default function imageCreationMiddleware(req, res, next) {
-  upload.single('uploadedFile')(req, res, function(err) {
+  upload.single('uploadedFile')(req, res, function (err) {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
-
     if (!req.file) {
       return res.status(400).json({ error: 'Nessun file caricato' });
     }
-
     console.log('File caricato:', req.file.filename);
     req.file.ownerId = req.userId
-    // Rispondi subito, non chiamare next() perché hai già gestito la risposta
     res.status(200).json({ message: 'File caricato con successo', file: req.file });
   });
 }
