@@ -1,0 +1,304 @@
+openapi: 3.0.0
+info:
+  title: Social Network API - Full Master Integration
+  description: >
+    Documentazione definitiva sincronizzata con:
+    - UserRoutes & PostRoutes (Express)
+    - Joi Validators (Body, Params, Query)
+    - Mongoose Schemas (User, Post, Tag, Like, Comment)
+    - Socket.io Real-Time Events
+  version: 5.0.0
+
+servers:
+  - url: http://localhost:3001
+    description: Server Locale
+
+tags:
+  - name: Auth
+  - name: Password
+  - name: Profile
+  - name: User Posts
+    description: Gestione post privati dell'utente autenticato
+  - name: Public Feed
+    description: Visualizzazione contenuti globali (senza login)
+  - name: Tags
+  - name: Real-Time (WebSockets)
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # --- INPUT ---
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+
+    UserRegisterInput:
+      type: object
+      required: [name, email, password]
+      properties:
+        name: { type: string, minLength: 3, maxLength: 256 }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 3 }
+
+    PostCreateInput:
+      type: object
+      required: [title, description]
+      properties:
+        title: { type: string, minLength: 3, maxLength: 256 }
+        description: { type: string, minLength: 3 }
+        status: { type: string, enum: [public, draft], default: draft }
+        tag: { type: array, items: { type: string, minLength: 3 } }
+        imagePost: { type: string }
+
+    PostUpdateInput:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        status: { type: string, enum: [public, draft, delete, archived] }
+        tag: { type: array, items: { type: string } }
+
+    # --- OUTPUT ---
+    UserNormalized:
+      type: object
+      properties:
+        _id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        status: { type: string }
+        avatar: { type: string }
+
+    PostResponse:
+      type: object
+      properties:
+        _id: { type: string }
+        ownerId: { type: string }
+        title: { type: string }
+        description: { type: string }
+        status: { type: string }
+        img: { type: string }
+        tag: { type: array, items: { type: object, properties: { tag: { type: string } } } }
+        createdAt: { type: string, format: date-time }
+
+  parameters:
+    ObjectId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, pattern: '^[0-9a-fA-F]{24}$' }
+
+paths:
+  # ================= AUTH =================
+  /user:
+    post:
+      summary: Registrazione (addUser)
+      tags: [Auth]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserRegisterInput' }
+      responses:
+        '201': { content: { application/json: { schema: { $ref: '#/components/schemas/UserNormalized' } } } }
+
+  /user/login:
+    post:
+      summary: Login (login)
+      tags: [Auth]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginInput' }
+      responses:
+        '200': { content: { application/json: { schema: { $ref: '#/components/schemas/UserNormalized' } } } }
+
+  /user/pending:
+    post:
+      summary: Login Utenti Pendenti (loginPending)
+      tags: [Auth]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginInput' }
+      responses:
+        '200': { content: { text/plain: { schema: { type: string, example: "Email inviata correttamente" } } } }
+
+  /user/{id}/confirm/{token}:
+    get:
+      summary: Conferma Account (confirmRegistration)
+      tags: [Auth]
+      parameters:
+        - { $ref: '#/components/parameters/ObjectId' }
+        - name: token
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { content: { text/plain: { schema: { type: string, example: "Conferma avvenuta" } } } }
+
+  # ================= PASSWORD RESET =================
+  /user/reset_password:
+    post:
+      summary: Richiesta Reset Password (resetPassword)
+      tags: [Password]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, required: [email], properties: { email: { type: string } } }
+      responses:
+        '200': { content: { text/plain: { schema: { type: string, example: "Email di reset inviata" } } } }
+
+  /user/reset/{token}:
+    get:
+      summary: Verifica Token Reset (cofirmUserResetPassword)
+      tags: [Password]
+      parameters: [{ name: token, in: path, required: true }]
+      responses:
+        '200': { content: { text/plain: { schema: { type: string, example: "token verificato" } } } }
+
+  /user/new_password/{token}:
+    post:
+      summary: Nuova Password Definitiva (newPassword)
+      tags: [Password]
+      parameters: [{ name: token, in: path, required: true }]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, required: [passwordNew], properties: { passwordNew: { type: string } } }
+      responses:
+        '200': { content: { text/plain: { schema: { type: string, example: "password modificata" } } } }
+
+  # ================= PROFILE =================
+  /user/profile:
+    get:
+      summary: Visualizza Profilo (userProfile)
+      tags: [Profile]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { content: { application/json: { schema: { $ref: '#/components/schemas/UserNormalized' } } } }
+
+  /user/profile/update:
+    patch:
+      summary: Aggiorna Profilo (updateProfile)
+      tags: [Profile]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { name: { type: string } } }
+      responses:
+        '200': { content: { application/json: { schema: { $ref: '#/components/schemas/UserNormalized' } } } }
+
+  /user/profile/avatar/upload:
+    post:
+      summary: Caricamento Avatar (imageCreationMiddleware)
+      tags: [Profile]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: "Avatar caricato" }
+
+  # ================= USER POSTS (Privati) =================
+  /user/post/create:
+    post:
+      summary: Crea nuovo post (createPost)
+      tags: [User Posts]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PostCreateInput' }
+      responses:
+        '201': { description: "Post creato" }
+
+  /user/post/:
+    get:
+      summary: Lista miei post (getPosts)
+      tags: [User Posts]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/PostResponse' } } } } }
+
+  /user/post/{id}:
+    get:
+      summary: Dettaglio post utente (getPostByIdPostAndUserId)
+      tags: [User Posts]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ObjectId' }]
+      responses:
+        '200': { content: { application/json: { schema: { $ref: '#/components/schemas/PostResponse' } } } }
+
+  /user/post/update/{id}:
+    patch:
+      summary: Modifica post/status (updatePostStatus)
+      tags: [User Posts]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ObjectId' }]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PostUpdateInput' }
+      responses:
+        '200': { description: "Aggiornato" }
+
+  # ================= PUBLIC FEED =================
+  /post/:
+    get:
+      summary: Feed pubblico globale (getListPublicPosts)
+      tags: [Public Feed]
+      responses:
+        '200': { content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/PostResponse' } } } } }
+
+  /post/{id}:
+    get:
+      summary: Singolo post pubblico (getListPublicPost)
+      tags: [Public Feed]
+      parameters: [{ $ref: '#/components/parameters/ObjectId' }]
+      responses:
+        '200': { content: { application/json: { schema: { $ref: '#/components/schemas/PostResponse' } } } }
+
+  # ================= TAGS =================
+  /user/tag/{id}:
+    get:
+      summary: Lista Tag di un post (getTag)
+      tags: [Tags]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ObjectId' }]
+      responses:
+        '200': { description: "OK" }
+
+  /user/tag/delete/{id}:
+    patch:
+      summary: Rimuovi tag da post (deleteTag)
+      tags: [Tags]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ObjectId' }]
+      responses:
+        '200': { description: "Tag eliminato" }
+
+  # ================= SOCKET EVENTS (Virtual Paths) =================
+  "socket.io: like_post":
+    post:
+      summary: "[EVENT] Like/Unlike Post"
+      tags: [Real-Time (WebSockets)]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { postId: { type: string } } }
+      responses: { '200': { description: "Evento Like inviato" } }
+
+  "socket.io: comment_post":
+    post:
+      summary: "[EVENT] Crea Commento"
+      tags: [Real-Time (WebSockets)]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { postId: { type: string }, comment: { type: string } } }
+      responses: { '200': { description: "Commento inviato" } }
