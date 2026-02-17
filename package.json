@@ -24,7 +24,8 @@
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "c8": "^10.1.3",

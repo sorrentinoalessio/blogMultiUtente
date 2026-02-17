@@ -4,8 +4,8 @@ import CryptoUtils from "../../../src/utils/CryptoUtils.js";
 import path from "path";
 import { expect } from "chai";
 import request from "supertest";
-import app from "../../../server.js"; // 1. Assicurati che il percorso sia corretto
-import { getMaxListeners } from "events";
+import app from "../../../server.js"; 
+
 
 const sandbox = sinon.createSandbox();
 let user;

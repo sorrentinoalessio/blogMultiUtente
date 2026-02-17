@@ -5,8 +5,12 @@ import { connect } from './database.js';
 import {Server} from 'socket.io';
 import http from 'http';
 import SocketIoInitializer from './src/components/SocketIoInitializer.js';
-import { swaggerUi, swaggerDocs } from "./swagger.js";
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+import YAML from 'yaml';
 import cors from "cors";
+const file = fs.readFileSync('./swagger.yaml', 'utf8');
+const swaggerDocument = YAML.parse(file);
 
 export const host = 'localhost' ;
 export const port = 3001;
@@ -16,12 +20,12 @@ app.use(express.json());
 
 
 app.use(cors({
-  origin: 'http://localhost:3001', 
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 await connect()
