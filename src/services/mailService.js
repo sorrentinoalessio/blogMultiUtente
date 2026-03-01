@@ -51,7 +51,6 @@ class MailService {
     }
 
     async sendMailCommentNotification(postUser, post) {
-        console.log("email")
         const link = `http://127.0.0.1:3001/user/post/${post._id.toString()}`;
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,

@@ -17,8 +17,8 @@ export const add = async (content) => {
     return user;
 }
 
-export const verifyRegistrationToken = async (id,token) => {
-    return await userRepo.getByIdAndToken(id,token);
+export const verifyRegistrationToken = async (id, token) => {
+    return await userRepo.getByIdAndToken(id, token);
 }
 
 export const verifyToken = async (token) => {
@@ -54,7 +54,7 @@ export const loginUserPending = async (email, password) => {
     if (user.password !== cryptoUtils.sha256(password, user.salt)) {
         throw new UnauthorizedException('Unauthorized');
     }
-    await mailService.sendMailCommentNotification(user);
+    await mailService.sendRegistrationMail(user);
 }
 
 export const userPasswordReset = async (email) => {
@@ -67,9 +67,9 @@ export const userPasswordReset = async (email) => {
     await mailService.sendMailLinkPassRecovery(userTemp);
 }
 
-export const addUserNewPassword = async (passwordNew,token) => {
+export const addUserNewPassword = async (passwordNew, token) => {
     const { password, salt } = cryptoUtils.hashPassword(passwordNew);
-    await userRepo.addResetPassword(password, salt,token);
+    await userRepo.addResetPassword(password, salt, token);
 }
 
 export const userProfileList = async (userId, status) => {

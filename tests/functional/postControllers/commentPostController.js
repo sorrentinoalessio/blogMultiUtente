@@ -17,7 +17,7 @@ describe('COMMENT POST test', () => {
     });
 
     beforeEach(async () => {
-        user = await fixturesUtils.createUser({}, true);
+        user = await fixturesUtils.createUser({email: 'comment@gmail.com'}, true);
         client = SocketFixtures.createClient(user);
         client.connect();
         client.on("connect_error", (err) => {
@@ -28,7 +28,7 @@ describe('COMMENT POST test', () => {
     });
 
     describe('COMMENT POST success', () => {
-        it.only('Should comment post', async () => {
+        it('Should comment post', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const comment = {
                 postId: postData._id.toString(),

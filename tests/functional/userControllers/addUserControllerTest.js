@@ -343,6 +343,7 @@ describe('Add user controller tests', () => {
                         email: userData.email,
                         password: 'passwordIncorrect'
                     });
+
                 expect(res.status).eq(401);
 
             })
