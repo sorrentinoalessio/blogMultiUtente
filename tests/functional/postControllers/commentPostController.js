@@ -3,6 +3,7 @@ import fixturesUtils from '../../fixtures/fixturesUtils.js';
 import SocketFixtures from '../../fixtures/SocketFixtures.js';
 import sinon from 'sinon';
 import { actions } from '../../../src/constants/const.js';
+import mailer, { createTransport } from 'nodemailer';
 
 const sandbox = sinon.createSandbox();
 
@@ -27,12 +28,18 @@ describe('COMMENT POST test', () => {
     });
 
     describe('COMMENT POST success', () => {
-        it('Should comment post', async () => {
+        it.only('Should comment post', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const comment = {
                 postId: postData._id.toString(),
                 comment: "comment new"
             }
+            const sendMailStub = sandbox.stub().resolves({
+                messageId: '1'
+            });
+            sandbox.stub(mailer, 'createTransport').returns({
+                sendMail: sendMailStub
+            });
             const result = await new Promise((resolve, reject) => {
                 client.emit(actions.COMMENT_POST, comment, (data) => {
                     resolve(data.result);
@@ -98,7 +105,7 @@ describe('COMMENT POST test', () => {
             client.disconnect();
         })
 
-         it('Should list comment post object void', async () => {
+        it('Should list comment post object void', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
             const comment2 = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
@@ -129,8 +136,8 @@ describe('COMMENT POST test', () => {
             client.disconnect();
         })
     })
-     describe('COMMENT Delete fail', () => {
-     it('Should delete comment post', async () => {
+    describe('COMMENT Delete fail', () => {
+        it('Should delete comment post', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true)
             const result = await new Promise((resolve, reject) => {

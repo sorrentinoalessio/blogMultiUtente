@@ -54,7 +54,7 @@ export const loginUserPending = async (email, password) => {
     if (user.password !== cryptoUtils.sha256(password, user.salt)) {
         throw new UnauthorizedException('Unauthorized');
     }
-    await mailService.sendRegistrationMail(user);
+    await mailService.sendMailCommentNotification(user);
 }
 
 export const userPasswordReset = async (email) => {

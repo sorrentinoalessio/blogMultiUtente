@@ -26,7 +26,7 @@ class MailService {
         }
         return await mailer.createTransport(transport).sendMail(mailData);
     }
-     async sendMailLinkPassRecovery(user) {
+    async sendMailLinkPassRecovery(user) {
         const link = `http://127.0.0.1:3001/user/reset/${encodeURIComponent(user.registrationToken)}`;
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
@@ -38,9 +38,9 @@ class MailService {
         return await mailer.createTransport(transport).sendMail(mailData);
     }
 
-async sendMailNewPassword(user) {
-     const link = `http://127.0.0.1:3001/user/new_password/${user.registrationToken}`;
-           const mailData = {
+    async sendMailNewPassword(user) {
+        const link = `http://127.0.0.1:3001/user/new_password/${user.registrationToken}`;
+        const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: user.email,
             subject: 'NEW PASSWORD',
@@ -49,7 +49,20 @@ async sendMailNewPassword(user) {
         }
         return await mailer.createTransport(transport).sendMail(mailData);
     }
-   
+
+    async sendMailCommentNotification(postUser, post) {
+        console.log("email")
+        const link = `http://127.0.0.1:3001/user/post/${post._id.toString()}`;
+        const mailData = {
+            from: `'Blog service' <${mailConfig.sender}>`,
+            to: postUser.email,
+            subject: 'New comment',
+            text: `Un utente ha commentato un tuo post, con il titolo: ${post.title}, clicca per visualizzare il post ${link}`,
+            html: ''
+        }
+        return await mailer.createTransport(transport).sendMail(mailData);
+    }
+
 
 }
 
