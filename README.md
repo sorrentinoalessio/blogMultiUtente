@@ -1,6 +1,6 @@
 # Blog Multi-Utente API & Real-time
 
-Sistema backend costruito con **Node.js**, **Express**, **MongoDB** e **Socket.io**. Gestisce il ciclo di vita dell'utente, la pubblicazione di contenuti e commenti e like istantanei.
+Sistema backend costruito con **Node.js**, **Express**, **MongoDB** e **Socket.io**. Gestisce il ciclo di vita dell'utente, la pubblicazione di contenuti e commenti e like istantanei, con notifica nuovi commenti.
 
 ---
 
