@@ -31,6 +31,12 @@ Sistema backend costruito con **Node.js**, **Express**, **MongoDB** e **Socket.i
 
 ---
 
+## Avvio blog con docker
+1. clona la repository del branch docker
+2. crea il file .env e configuralo(vedi sotto)
+3. esegui docker-compose up --build
+4. server attivo con due container blog e mongo
+
 ## 📖 Documentazione Interattiva (Swagger)
 
 Il progetto utilizza **Swagger (OpenAPI 3.0)** per mappare gli endpoint e testare i CRUD.
