@@ -10,7 +10,7 @@ info:
   version: 5.0.0
 
 servers:
-  - url: http://localhost:3001
+  - url: https://alessio-be.longwavestudio.dev
     description: Server Locale
 
 tags:
