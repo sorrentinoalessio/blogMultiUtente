@@ -10,7 +10,7 @@ import { postUpdateBodyValidator } from '../validators/postUpdateBodyValidator.j
 export class PostRoutes {
   constructor(router) {
     router.post('/user/post/create', checkAuthorizationMiddleware, postBodyValidator, createPost); //crea post 
-    router.get('/user/post/', checkAuthorizationMiddleware, getPosts); //lista post user
+    //router.get('/user/post/', checkAuthorizationMiddleware, getPosts); //lista post user
     router.get('/user/tag/:id', checkAuthorizationMiddleware, postIdParamValidator, getTag);// lista tag post user
     router.patch('/user/tag/delete/:id', checkAuthorizationMiddleware, postIdParamValidator, deleteTag); // elimina tag da id dell post user
     router.get('/user/post/:id', checkAuthorizationMiddleware, postIdParamValidator, getPostByIdPostAndUserId); // list post by user
