@@ -21,20 +21,18 @@ export const confirmRegistration = async (req, res) => {
     const userId = req.params.id;
     const token = req.params.token;
     try {
-        const user = await verifyRegistrationToken(userId, token);
-        res.status(200).send('Conferma avvenuta. Registrazione completata');
+        await verifyRegistrationToken(userId, token);
+        res.redirect(`${process.env.FRONTEND_URL}/login?confirmed=true`);
     } catch (err) {
-        res.status(err.status).json({ message: err.message });
+        res.redirect(`${process.env.FRONTEND_URL}/login?confirmed=false`);
     }
 }
 
 export const cofirmUserResetPassword = async (req, res) => {
-
     const token = req.params.token;
     try {
         const user = await verifyToken(token);
-        res.status(200);
-        res.redirect(`${process.env.FRONTEND_URL}/reset-password/${token}`);
+        res.status(200).json({ message: 'Token valido' });
     } catch (err) {
         res.status(err.status || 400).json({ message: err.message });
     }

@@ -27,28 +27,17 @@ class MailService {
         return await mailer.createTransport(transport).sendMail(mailData);
     }
     async sendMailLinkPassRecovery(user) {
-        const link = `http://127.0.0.1:3001/user/reset/${encodeURIComponent(user.registrationToken)}`;
-        const mailData = {
-            from: `'Blog service' <${mailConfig.sender}>`,
-            to: user.email,
-            subject: 'RESET PASSWORD',
-            text: `Ciao ${user.name}, clicca il link per impostare la nuova password, se non sei stato tu a richiederla ignora questa email:  ${link}`,
-            html: ''
-        }
-        return await mailer.createTransport(transport).sendMail(mailData);
+    const link = `${process.env.FRONTEND_URL}/reset-password/${encodeURIComponent(user.registrationToken)}`;
+    const mailData = {
+        from: `'Blog service' <${mailConfig.sender}>`,
+        to: user.email,
+        subject: 'RESET PASSWORD',
+        text: `Ciao ${user.name}, clicca il link per impostare la nuova password, se non sei stato tu a richiederla ignora questa email: ${link}`,
+        html: ''
     }
-
-    async sendMailNewPassword(user) {
-        const link = `http://127.0.0.1:3001/user/new_password/${user.registrationToken}`;
-        const mailData = {
-            from: `'Blog service' <${mailConfig.sender}>`,
-            to: user.email,
-            subject: 'NEW PASSWORD',
-            text: `clicca il link per modificare la password ${link}`,
-            html: ''
-        }
-        return await mailer.createTransport(transport).sendMail(mailData);
-    }
+    return await mailer.createTransport(transport).sendMail(mailData);
+}
+    
 
     async sendMailCommentNotification(postUser, post) {
         const link = `http://127.0.0.1:3001/user/post/${post._id.toString()}`;
