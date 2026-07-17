@@ -33,8 +33,8 @@ export const cofirmUserResetPassword = async (req, res) => {
     const token = req.params.token;
     try {
         const user = await verifyToken(token);
-        await mailService.sendMailNewPassword(user);
-        res.status(200).send(`token verificato `);
+        res.status(200);
+        res.redirect(`${process.env.FRONTEND_URL}/reset-password/${token}`);
     } catch (err) {
         res.status(err.status || 400).json({ message: err.message });
     }
@@ -63,7 +63,7 @@ export const resetPassword = async (req, res) => {
     const { email } = req.body;
     try {
         await userPasswordReset(email);
-        res.status(200).send('Email di reset password inviata');
+        res.status(200).json({ message: 'Email di reset password inviata correttamente' });
     } catch (err) {
         res.status(err.status || 500).json({ message: err.message });
     }
@@ -91,7 +91,7 @@ export const newPassword = async (req, res) => {
     const { passwordNew } = req.body;
     try {
         await addUserNewPassword(passwordNew, token)
-        res.status(200).send('password modificata');
+        res.status(200).json({ message: 'password modificata' });
     } catch (err) {
         res.status(err.status || 500).json({ message: err.message });
     }
