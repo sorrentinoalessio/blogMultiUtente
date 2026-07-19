@@ -6,7 +6,7 @@ class UserNormalizer {
   }
 
   getUser(user) {
-    return user.map(user => this.get(user));
+     return this.get(user);
   }
 }
 
