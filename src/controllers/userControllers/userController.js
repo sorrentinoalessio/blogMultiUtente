@@ -69,7 +69,7 @@ export const resetPassword = async (req, res) => {
 
 export const userProfile = async (req, res) => {
     try {
-        const profile = await userProfileList(req.userId, userStatus.ACTIVE, req.body);
+        const profile = await userProfileList(req.userId, userStatus.ACTIVE);
         res.status(200).json(userNormalizer.getUser(profile));
     } catch (err) {
         res.status(err.status || 500).json({ message: err.message });
