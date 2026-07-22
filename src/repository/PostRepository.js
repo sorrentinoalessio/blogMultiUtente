@@ -4,6 +4,7 @@ import postSchema from "../schemas/postSchema.js";
 import tagSchemas from "../schemas/tagSchema.js";
 import commentSchema from "../schemas/commentSchema.js";
 import likeSchema from "../schemas/likeSchema.js";
+import userSchema from "../schemas/userSchema.js";
 
 
 class PostRepository {
@@ -64,10 +65,24 @@ class PostRepository {
     }
 
     async getPostsStatus() {
-        const posts = await postSchema.find({ status: postStatus.PUBLIC });
-        return posts.map((item) => item.toObject());
+    const posts = await postSchema.find({ status: postStatus.PUBLIC });
 
-    }
+    const owners = await userSchema
+        .find({ _id: { $in: posts.map(p => p.ownerId) } })
+        .select('name');
+
+    // creo una mappa id -> name per lookup veloce
+    const ownerMap = new Map(owners.map(o => [o._id.toString(), o.name]));
+
+    return posts.map((item) => ({
+        ...item.toObject(),
+        ownerName: ownerMap.get(item.ownerId.toString()) ?? null
+       
+    })
+);
+    
+}
+
     async getPostStatusDetails(postId) {
             const [post, comments, likes] = await Promise.all([
             postSchema.findOne({ _id: postId, status: postStatus.PUBLIC }),
