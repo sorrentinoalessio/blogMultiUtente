@@ -54,9 +54,37 @@ class PostRepository {
     }
 
     async getByPostsId(userId) {
+        const posts = await postSchema.find({ ownerId: userId });
+        const postIds = posts.map((p) => p._id);
 
-        const post = await postSchema.find({ ownerId: userId });
-        return post;
+        // commenti
+        const comments = await commentSchema.find({ postId: { $in: postIds } });
+        const commentOwnerIds = comments.map((c) => c.ownerId);
+        const commentOwners = await userSchema
+            .find({ _id: { $in: commentOwnerIds } })
+            .select("name");
+        const commentOwnerMap = new Map(
+            commentOwners.map((o) => [o._id.toString(), o.name])
+        );
+
+        // likes
+        const likesdocs = await likeSchema.find({ postId: { $in: postIds } });
+        const likesMap = new Map(likesdocs.map((l) => [l.postId.toString(), l]));
+
+        return posts.map((item) => {
+            const likeDoc = likesMap.get(item._id.toString());
+            return {
+                ...item.toObject(),
+                comments: comments
+                    .filter((c) => c.postId.toString() === item._id.toString())
+                    .map((c) => ({
+                        ...c.toObject(),
+                        authorName: commentOwnerMap.get(c.ownerId?.toString()) ?? "Utente",
+                    })),
+                likes: likeDoc?.likes ?? [],
+                likesCount: likeDoc?.likes?.length ?? 0,
+            };
+        });
     }
 
     async getPost(id, userId) {
@@ -65,34 +93,57 @@ class PostRepository {
     }
 
     async getPostsStatus() {
-    const posts = await postSchema.find({ status: postStatus.PUBLIC });
+        const posts = await postSchema.find({ status: postStatus.PUBLIC });
+        const postIds = posts.map((p) => p._id);
 
-    const owners = await userSchema
-        .find({ _id: { $in: posts.map(p => p.ownerId) } })
-        .select('name');
+        // owner names
+        const owners = await userSchema
+            .find({ _id: { $in: posts.map((p) => p.ownerId) } })
+            .select("name");
+        const ownerMap = new Map(owners.map((o) => [o._id.toString(), o.name]));
 
-    // creo una mappa id -> name per lookup veloce
-    const ownerMap = new Map(owners.map(o => [o._id.toString(), o.name]));
+        // commenti
+        const comments = await commentSchema.find({ postId: { $in: postIds } });
+        const commentOwnerIds = comments.map((c) => c.ownerId);
+        const commentOwners = await userSchema
+            .find({ _id: { $in: commentOwnerIds } })
+            .select("name");
+        const commentOwnerMap = new Map(
+            commentOwners.map((o) => [o._id.toString(), o.name])
+        );
 
-    return posts.map((item) => ({
-        ...item.toObject(),
-        ownerName: ownerMap.get(item.ownerId.toString()) ?? null
-       
-    })
-);
-    
-}
+        // likes
+        const likesdocs = await likeSchema.find({ postId: { $in: postIds } });
+        const likesMap = new Map(likesdocs.map((l) => [l.postId.toString(), l]));
+
+        // ← mancava questo
+        return posts.map((item) => {
+            const likeDoc = likesMap.get(item._id.toString());
+            return {
+                ...item.toObject(),
+                ownerName: ownerMap.get(item.ownerId.toString()) ?? null,
+                comments: comments
+                    .filter((c) => c.postId.toString() === item._id.toString())
+                    .map((c) => ({
+                        ...c.toObject(),
+                        authorName: commentOwnerMap.get(c.ownerId?.toString()) ?? "Utente",
+                    })),
+                likes: likeDoc?.likes ?? [],
+                likesCount: likeDoc?.likes?.length ?? 0,
+            };
+        });
+    }
 
     async getPostStatusDetails(postId) {
-            const [post, comments, likes] = await Promise.all([
+        const [post, comments, likes] = await Promise.all([
             postSchema.findOne({ _id: postId, status: postStatus.PUBLIC }),
             commentSchema.find({ postId: postId }),
             likeSchema.findOne({ postId: postId })
         ]);
-          if (!post) {
+        if (!post) {
             return null;
         }
-        return {...post.toObject(), comments: comments.map(c => c.toObject()), likes: likes ? likes.toObject() : { likes: [], likesCount: 0 }};
+        return { ...post.toObject(), comments: comments.map(c => c.toObject()), likes: likes ? likes.toObject() : { likes: [], likesCount: 0 } };
     }
 
 
