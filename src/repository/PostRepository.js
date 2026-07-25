@@ -96,8 +96,8 @@ class PostRepository {
     }
 
 
-    async patchPostStatus(id, content) {
-        const post = await postSchema.findOneAndUpdate({ _id: id, }, { $set: { status: content.status, title: content.title, description: content.description }, $addToSet: { tag: content.tag } }, { new: true });
+    async patchPost(id, content) {
+        const post = await postSchema.findOneAndUpdate({ _id: id, }, { $set: { status: content.status, title: content.title, description: content.description, tag: content.tag }, }, { new: true });
         return post;
     }
 

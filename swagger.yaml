@@ -251,7 +251,7 @@ paths:
 
   /user/post/update/{id}:
     patch:
-      summary: Modifica post/status (updatePostStatus)
+      summary: Modifica post/status (updatePost)
       tags: [User Posts]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ObjectId' }]
