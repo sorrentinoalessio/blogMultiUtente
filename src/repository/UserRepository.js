@@ -114,6 +114,7 @@ class UserRepository {
         const res = await userSchema.findOne({ _id: userId, status: status }).catch(err => {
             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
         })
+        console.log(res);
 
         if (!res) {
             throw new MongoInternalException(`something went wrong`, 500);

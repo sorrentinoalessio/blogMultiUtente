@@ -42,7 +42,7 @@ export const loginUser = async (email, password) => {
         accessToken: accessToken,
         refreshToken: refreshToken,
         name: user.name,
-        id: user.id
+        userId: user._id
     };
 }
 export const loginUserPending = async (email, password) => {

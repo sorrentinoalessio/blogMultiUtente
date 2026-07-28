@@ -1,5 +1,7 @@
 
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { registerRoutes } from './src/routes/routes.js';
 import { connect } from './database.js';
 import {Server} from 'socket.io';
@@ -15,6 +17,13 @@ const swaggerDocument = YAML.parse(file);
 export const host = 'localhost' ;
 export const port = 3001;
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, 'avatar', 'uploads');
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 app.use(express.json());
 
@@ -26,7 +35,7 @@ app.use(cors({
 }));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+app.use('/uploads', express.static(uploadsDir));
 
 await connect()
 const httpServer = http.createServer(app);
