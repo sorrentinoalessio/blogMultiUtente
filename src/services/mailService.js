@@ -40,7 +40,7 @@ class MailService {
     
 
     async sendMailCommentNotification(postUser, post) {
-        const link = `${process.env.BACKEND_URL}/user/post/${post._id.toString()}`;
+        const link = `${process.env.FRONTEND_URL}/user/post/${post._id.toString()}`;
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: postUser.email,
