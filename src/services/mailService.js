@@ -16,7 +16,7 @@ const transport = {
 
 class MailService {
     async sendRegistrationMail(user) {
-        const link = `http://127.0.0.1:3001/user/${user._id}/confirm/${encodeURIComponent(user.registrationToken)}`;
+        const link = `${process.env.BACKEND_URL}/user/${user._id}/confirm/${encodeURIComponent(user.registrationToken)}`;
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: user.email,
@@ -40,7 +40,7 @@ class MailService {
     
 
     async sendMailCommentNotification(postUser, post) {
-        const link = `http://127.0.0.1:3001/user/post/${post._id.toString()}`;
+        const link = `${process.env.BACKEND_URL}/user/post/${post._id.toString()}`;
         const mailData = {
             from: `'Blog service' <${mailConfig.sender}>`,
             to: postUser.email,
