@@ -93,7 +93,7 @@ class PostRepository {
     }
 
     async getPostsStatus() {
-        const posts = await postSchema.find({ status: postStatus.PUBLIC });
+        const posts = await postSchema.find({ status: postStatus.PUBLIC }).sort({ creationDate: -1 });;
         const postIds = posts.map((p) => p._id);
 
         // owner names
@@ -157,25 +157,3 @@ class PostRepository {
 export default new PostRepository();
 
 
-
-/*  async tag(listTag) {
-        const result = [];
-        try {
-            for (const content of listTag) {
-
-                let res = await tagSchemas.findOne({ content });
-                if (!res) {
-                    res = await tagSchemas.create({ content });
-                }
-                result.push(res.toObject());
-            } return result;
-
-        } catch (err) {
-            throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
-        }
-
-    }
-
-}
-
-export default new PostRepository();*/
