@@ -54,7 +54,7 @@ jobs:
 
             cd /var/www/backend
 
-            git checkout produzione
+            git checkout main
             git pull
             npm install
 
