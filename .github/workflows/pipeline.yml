@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - produzione
+      - main
   pull_request:
     branches:
-      - produzione
+      - main
 
 jobs:
   build:
@@ -36,16 +36,15 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          printf "%s\n" "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/deploy_key.pem
+          printf "%s\n" "${{ secrets.ARUBA_SSH_KEY }}" > ~/.ssh/deploy_key.pem
           chmod 600 ~/.ssh/deploy_key.pem
-          ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.ARUBA_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to production
         run: |
-          ssh -i ~/.ssh/deploy_key.pem ubuntu@${{ secrets.AWS_HOST }} <<EOF
+          ssh -i ~/.ssh/deploy_key.pem ${{ secrets.ARUBA_USER }}@${{ secrets.ARUBA_HOST }} <<EOF
             set -e
 
-            # Esporta tutte le variabili d'ambiente
             export MONGODB_URI="${{ secrets.MONGODB_URI }}"
             export MAIL_USER="${{ secrets.MAIL_USER }}"
             export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
@@ -53,17 +52,12 @@ jobs:
             export PUBLIC_KEY="${{ secrets.PUBLIC_KEY }}"
             export SWAGGER_URL="${{ secrets.SWAGGER_URL }}"
 
-            # Vai nella cartella del progetto
-            cd /home/ubuntu/blog/blogMultiUtente
+            cd /var/www/backend
 
-            # Aggiorna il codice
-            git checkout main
+            git checkout produzione
             git pull
             npm install
 
-            # Primo deploy: avvia se non esiste
-            pm2 describe blog || pm2 start ecosystem.config.cjs --env production
-
-            # Reload/apply changes per deploy successivi
+            pm2 describe BLOG || pm2 start ecosystem.config.cjs --env production
             pm2 reload ecosystem.config.cjs --env production
           EOF
