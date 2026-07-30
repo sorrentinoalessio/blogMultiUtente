@@ -195,14 +195,16 @@ describe('Add user controller tests', () => {
         })
 
         describe('GET User confirm', () => {
-            it('Should return 200 id e token valid', async () => {
+            it('Should redirect to login confirmed=true if id and token are valid', async () => {
                 const userData = await userSchema.create({
                     registrationToken: "token_registr16c"
                 });
                 const res = await request.execute(app)
                     .get(`/user/${userData._id}/confirm/${userData.registrationToken}`)
+                    .redirects(0) // impedisce a superagent di seguire il redirect
                     .send();
-                expect(res.status).eq(200);
+                expect(res.status).eq(302);
+                expect(res.headers.location).to.include('confirmed=true');
             })
 
 
@@ -385,17 +387,16 @@ describe('Add user controller tests', () => {
         });
 
         describe('GET user profile fail  ', () => {
-            it('Should return 200 if status is different active', async () => {
+            it('Should return 500 if user status is not active', async () => {
                 const user = await fixturesUtils.createUser({ status: userStatus.PENDING }, true);
                 const token = cryptoUtils.generateToken(user, 86400);
                 const res = await request.execute(app)
                     .get('/user/profile')
                     .set('Authorization', `Bearer ${token}`)
                     .send();
-                expect(res.status).eq(200);
-                expect(res.status.message).eq()
+                expect(res.status).eq(500);
+            });
 
-            })
             it('Should return 500 if user not found', async () => {
                 const user = await fixturesUtils.createUser({ status: userStatus.PENDING }, false);
                 const token = cryptoUtils.generateToken(user, 86400);
@@ -403,9 +404,7 @@ describe('Add user controller tests', () => {
                     .get('/user/profile')
                     .set('Authorization', `Bearer ${token}`)
                     .send();
-                expect(res.status).eq(200);
-
-
+                expect(res.status).eq(500); // ✅ corretto, non 200
             })
         });
         describe('GET User profile success  ', () => {
@@ -474,15 +473,13 @@ describe('Add user controller tests', () => {
         describe('GET registration token for reset Password success', () => {
             it('Should return 200 token valid', async () => {
                 const userData = await fixturesUtils.createUser({}, true);
-                const sendMailStub = sandbox.stub().resolves({
-                    messageId: '1'
-                });
-                sandbox.stub(mailer, 'createTransport').returns({
-                    sendMail: sendMailStub
-                });
+                const sendMailStub = sandbox.stub().resolves({ messageId: '1' });
+                sandbox.stub(mailer, 'createTransport').returns({ sendMail: sendMailStub });
+
                 const res = await request.execute(app)
-                    .get(`/user/reset/${userData.registrationToken}`)
-                    .send();
+                    .post('/user/reset_password')
+                    .send({ email: userData.email });  // ✅ manda l'email nel body
+
                 expect(res.status).eq(200);
                 expect(sendMailStub.called).to.be.true;
             });

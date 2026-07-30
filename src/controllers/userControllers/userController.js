@@ -17,9 +17,16 @@ export const addUser = async (req, res) => {
     }
 }
 
+import mongoose from 'mongoose';
+
 export const confirmRegistration = async (req, res) => {
     const userId = req.params.id;
     const token = req.params.token;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
     try {
         await verifyRegistrationToken(userId, token);
         res.redirect(`${process.env.FRONTEND_URL}/login?confirmed=true`);

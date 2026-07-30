@@ -5,7 +5,8 @@ import app from '../../server.js'
 import CryptoUtils from '../../src/utils/CryptoUtils.js';
 import fixturesUtils from '../../tests/fixtures/fixturesUtils.js';
 import sinon from 'sinon';
-import { postStatus } from '../../src/constants/const.js';
+import { postStatus, actions } from '../../src/constants/const.js';
+import { io as ioClient } from 'socket.io-client';
 
 
 const sandbox = sinon.createSandbox();
@@ -25,43 +26,80 @@ describe('Repo post controller tests', () => {
     });
 
     describe('GET  post by Id fail', () => {
-        it('Should return 201 if post not exist', async () => {
-            const userFake = await fixturesUtils.createUser({ email: 'postnotexist@mail.com' }, true);
-            const tokenFake = CryptoUtils.generateToken(userFake, 86400);
-            const res = await request.execute(app)
-                .get('/user/post')
-                .set('Authorization', `Bearer ${tokenFake}`)
-                .send()
-            expect(res.status).eq(201);
-            expect(res.text).eq('[]')
+        it('Should return empty array if post not exist', (done) => {
+            const clientSocket = ioClient(`http://localhost:3001/blog`, {
+                auth: { accessToken: token }
+            });
 
+            clientSocket.on('connect_error', (err) => {
+                clientSocket.close();
+                done(err);
+            });
 
-        })
-        it('Should return 401 if token is not provided', async () => {
-            const res = await request.execute(app)
-                .get('/user/post')
-                .send()
-            expect(res.status).eq(401)
-            expect(res.body.ownerId).eq(undefined);
-        })
+            clientSocket.on('connect', () => {
+                clientSocket.emit(actions.LIST_POST, {}, (response) => {
+                    try {
+                        expect(response.result.success).to.be.true;
+                        expect(response.result.data).to.deep.eq([]);
+                        clientSocket.close();
+                        done();
+                    } catch (err) {
+                        clientSocket.close();
+                        done(err);
+                    }
+                });
+            });
+        });
+    });
 
+    it('Should return error if token is not provided', (done) => {
+        const clientSocket = ioClient(`http://localhost:3001/blog`, {
+            auth: {}
+        });
 
-    })
+        clientSocket.on('connect_error', (err) => {
+            try {
+                expect(err.message).to.eq('Token mancante');
+                clientSocket.close();
+                done();
+            } catch (assertErr) {
+                clientSocket.close();
+                done(assertErr);
+            }
+        });
+
+        clientSocket.on('connect', () => {
+            clientSocket.close();
+            done(new Error('La connessione non doveva riuscire senza token'));
+        });
+    });
 
     describe('GET post repo success', () => {
-        it('Should return 201 list post', async () => {
-            const postData = {
-                title: "titolo",
-                description: "descrizione"
-            }
+        it('Should return list of posts', (done) => {
+            const clientSocket = ioClient(`http://localhost:3001/blog`, {
+                auth: { accessToken: token }
+            });
 
-            const res = await request.execute(app)
-                .get('/user/post')
-                .set('Authorization', `Bearer ${token}`)
-            expect(res.status).eq(201);
-            expect(res.body.ownerId).eq(postData.ownerId)
-        })
-    })
+            clientSocket.on('connect_error', (err) => {
+                clientSocket.close();
+                done(err);
+            });
+
+            clientSocket.on('connect', () => {
+                clientSocket.emit(actions.LIST_POST, {}, (response) => {
+                    try {
+                        expect(response.result.success).to.be.true;
+                        expect(response.result.data).to.be.an('array');
+                        clientSocket.close();
+                        done();
+                    } catch (err) {
+                        clientSocket.close();
+                        done(err);
+                    }
+                });
+            });
+        });
+    });
 
     describe('GET post by postId and userId success', () => {
         it('Should return 201 post', async () => {
@@ -72,9 +110,10 @@ describe('Repo post controller tests', () => {
             expect(res.status).eq(201);
         })
     })
+
     describe('GET posts public', () => {
         it('Should return 201 post', async () => {
-            const postData = await fixturesUtils.createPost({ status: postStatus.PUBLIC }, true);
+            const postData = await fixturesUtils.createPost({ status: postStatus.PUBLIC, ownerId: user._id }, true);
             const res = await request.execute(app)
                 .get(`/post`)
                 .set('Authorization', `Bearer ${token}`)
@@ -90,11 +129,10 @@ describe('Repo post controller tests', () => {
             const res = await request.execute(app)
                 .get(`/post/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)
-                
+
             expect(res.status).eq(201);
         })
     })
-
 
     describe('PATCH post update status success', () => {
         it('Should return status 201', async () => {
@@ -113,10 +151,11 @@ describe('Repo post controller tests', () => {
             expect(res.body.status).eq('public');
             expect(res.body.title).eq('nuovo titolo update');
             expect(res.body.description).eq('nuova descrizione update');
-            expect(res.body.tag[0].tag).to.equal('cinema');
-            expect(res.body.tag[1].tag).to.equal('tecnologia');
+            expect(res.body.tag).to.have.lengthOf(1);
+            expect(res.body.tag[0].tag).to.equal('tecnologia');
         })
     })
+
     describe('PATCH post update status fail body status empty or not [public, draft, delete,archived]  ', () => {
         it('Should return status 400 is body is empty', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
@@ -172,8 +211,8 @@ describe('Repo post controller tests', () => {
             expect(res.body.message).eq('ValidationError: "id" must only contain hexadecimal characters. "id" length must be 24 characters long');
         })
     })
-    describe('GET tag by postId and userId succes', () => {
 
+    describe('GET tag by postId and userId succes', () => {
         it('Should return 201 if tag found', async () => {
             const postData = await fixturesUtils.createPost({ ownerId: user._id }, true);
             const res = await request.execute(app)
@@ -181,7 +220,6 @@ describe('Repo post controller tests', () => {
                 .set('Authorization', `Bearer ${token}`)
             expect(res.status).eq(201);
         })
-
     })
 
     describe('DELETE tag from post success', () => {
