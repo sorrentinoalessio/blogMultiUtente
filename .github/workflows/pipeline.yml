@@ -51,6 +51,8 @@ jobs:
             export PRIVATE_KEY="${{ secrets.PRIVATE_KEY }}"
             export PUBLIC_KEY="${{ secrets.PUBLIC_KEY }}"
             export SWAGGER_URL="${{ secrets.SWAGGER_URL }}"
+            export FRONTEND_URL="${{ secrets.FRONTEND_URL }}"
+            export BACKEND_URL="${{ secrets.BACKEND_URL }}"
 
             cd /var/www/backend
 

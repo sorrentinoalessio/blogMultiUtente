@@ -15,7 +15,9 @@ module.exports = {
             HOST: process.env.HOST,
             MONGODB_URI: process.env.MONGODB_URI,
             MAIL_USER: process.env.MAIL_USER,
-            MAIL_PASSWORD: process.env.MAIL_PASSWORD
+            MAIL_PASSWORD: process.env.MAIL_PASSWORD,
+            FRONTEND_URL: process.env.FRONTEND_URL,
+            BACKEND_URL: process.env.BACKEND_URL
         },
         error_files: './logs/ennor.log',
         out_file: './logs/out.log'
