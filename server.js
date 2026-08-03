@@ -14,7 +14,7 @@ import cors from "cors";
 const file = fs.readFileSync('./swagger.yaml', 'utf8');
 const swaggerDocument = YAML.parse(file);
 
-export const host = process.env.HOST || '0.0.0.0';
+export const host = process.env.HOST || (process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost');
 export const port = 3001;
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
