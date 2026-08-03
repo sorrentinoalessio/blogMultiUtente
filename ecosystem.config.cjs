@@ -12,6 +12,7 @@ module.exports = {
         env_production: {
             NODE_ENV: 'production',
             PORT: 3001,
+            HOST: process.env.HOST,
             MONGODB_URI: process.env.MONGODB_URI,
             MAIL_USER: process.env.MAIL_USER,
             MAIL_PASSWORD: process.env.MAIL_PASSWORD
