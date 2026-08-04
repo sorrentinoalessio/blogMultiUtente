@@ -89,7 +89,34 @@ class PostRepository {
 
     async getPost(id, userId) {
         const post = await postSchema.findOne({ _id: id, ownerId: userId });
-        return post;
+        if (!post) return null;
+
+        // owner name
+        const owner = await userSchema.findById(post.ownerId).select("name");
+
+        // commenti
+        const comments = await commentSchema.find({ postId: post._id });
+        const commentOwnerIds = comments.map((c) => c.ownerId);
+        const commentOwners = await userSchema
+            .find({ _id: { $in: commentOwnerIds } })
+            .select("name");
+        const commentOwnerMap = new Map(
+            commentOwners.map((o) => [o._id.toString(), o.name])
+        );
+
+        // likes
+        const likeDoc = await likeSchema.findOne({ postId: post._id });
+
+        return {
+            ...post.toObject(),
+            ownerName: owner?.name ?? null,
+            comments: comments.map((c) => ({
+                ...c.toObject(),
+                authorName: commentOwnerMap.get(c.ownerId?.toString()) ?? "Utente",
+            })),
+            likes: likeDoc?.likes ?? [],
+            likesCount: likeDoc?.likes?.length ?? 0,
+        };
     }
 
     async getPostsStatus() {
