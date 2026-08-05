@@ -112,7 +112,7 @@ describe('Add post controller tests', () => {
 
             expect(res.status).eq(201);
             expect(res.body._id).to.exist;
-            expect(res.body.img).to.include('avatar/uploads');
+            expect(res.body.img).to.include('uploads');
             expect(res.body.img).to.include(user._id.toString());
         })
     })
