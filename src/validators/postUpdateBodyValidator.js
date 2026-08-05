@@ -9,7 +9,8 @@ const bodyValidator = Joi.object({
     title: Joi.string().min(3).max(256),
     description: Joi.string().min(3),
     tag: Joi.array().items(Joi.string().min(3)),
-    img: Joi.string()});
+    img: Joi.string()
+}).unknown(true);
 
 
 export const postUpdateBodyValidator = validator.body(bodyValidator);

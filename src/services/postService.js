@@ -37,9 +37,11 @@ export const getPostPublic = async (postId) => {
     return postRepo.getPostStatusDetails(postId);
 }
 
-export const getPostUpdate = async (id,content) => {
-    if (content.tag) {
+export const getPostUpdate = async (id, content = {}) => {
+    if (Array.isArray(content.tag)) {
             content.tag = await TagUtils.createTagUtils(content.tag)
+        } else if (typeof content.tag === 'string') {
+            content.tag = await TagUtils.createTagUtils([content.tag])
         }
     return postRepo.patchPost(id, content);
 }

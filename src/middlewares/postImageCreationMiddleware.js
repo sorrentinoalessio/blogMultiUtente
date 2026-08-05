@@ -30,7 +30,9 @@ export default function postImageCreationMiddleware(req, res, next) {
       return next(err);
     }
 
-    if (req.body?.tag && typeof req.body.tag === 'string') {
+    req.body = req.body ?? {};
+
+    if (typeof req.body.tag === 'string') {
       try {
         const parsedTag = JSON.parse(req.body.tag);
         req.body.tag = Array.isArray(parsedTag) ? parsedTag : [parsedTag];

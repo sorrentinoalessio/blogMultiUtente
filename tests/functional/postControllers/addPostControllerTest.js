@@ -115,5 +115,25 @@ describe('Add post controller tests', () => {
             expect(res.body.img).to.include('uploads');
             expect(res.body.img).to.include(user._id.toString());
         })
+
+        it('Should return 201 and persist uploaded image when updating a post', async () => {
+            const user = await fixturesUtils.createUser({}, true);
+            const token = CryptoUtils.generateToken(user, 86400);
+            const post = await fixturesUtils.createPost({ ownerId: user._id }, true);
+            const filePath = path.resolve('avatar/uploads/test.jpg');
+
+            const res = await supertest(app)
+                .patch(`/user/post/update/${post._id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .field('title', 'post aggiornato con immagine')
+                .field('description', 'descrizione aggiornata')
+                .field('tag', JSON.stringify(['cinema']))
+                .attach('uploadedFile', filePath);
+
+            expect(res.status).eq(201);
+            expect(res.body._id).to.exist;
+            expect(res.body.img).to.include('uploads');
+            expect(res.body.img).to.include(user._id.toString());
+        })
     })
 })

@@ -3,7 +3,7 @@ import { addPost, getPostsById, getPost, getPostsPublic, getPostUpdate ,getPostP
 import TagUtils from '../../utils/TagUtils.js';
 
 export const createPost = async (req, res) => {
-    const content = req.body;
+    const content = req.body ?? {};
     if (content.tag) {
         content.tag = await TagUtils.createTagUtils(content.tag)
     }
@@ -56,7 +56,7 @@ export const getListPublicPost = async (req, res) => {
 export const updatePost = async (req, res) => {
 
     const idPost = req.params.id;
-    const content = req.body;
+    const content = req.body ?? {};
 
     try {
         const post = await getPostUpdate(idPost, content);
