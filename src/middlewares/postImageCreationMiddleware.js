@@ -41,7 +41,7 @@ export default function postImageCreationMiddleware(req, res, next) {
 
     if (req.file) {
       req.file.ownerId = req.userId;
-      req.body.img = `../../avatar/uploads/${req.file.filename}`;
+      req.body.img = `/uploads/${req.file.filename}`;
     }
 
     return next();
