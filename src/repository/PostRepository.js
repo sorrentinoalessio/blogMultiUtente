@@ -175,7 +175,7 @@ class PostRepository {
 
 
     async patchPost(id, content) {
-        const post = await postSchema.findOneAndUpdate({ _id: id, }, { $set: { status: content.status, title: content.title, description: content.description, tag: content.tag }, }, { new: true });
+        const post = await postSchema.findOneAndUpdate({ _id: id, }, { $set: { status: content.status, title: content.title, description: content.description, tag: content.tag, img: content.img }, }, { new: true });
         return post;
     }
 

@@ -10,6 +10,7 @@ const bodyValidator = Joi.object({
     status: Joi.string().valid('public', 'draft','delete','archived').default('draft'),// status di default mette draft
     datePost: Joi.date(), // mette data creazione post se non inviato
     tag: Joi.array().items(Joi.string().min(3).max(24)), // tag come array di stringhe
+    img: Joi.string(),
     imagePost: Joi.string()
 
 }).unknown(true);
