@@ -1,3 +1,9 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { postStatus } from '../constants/const.js';
 import MongoInternalException from '../exceptions/MongoInternalException.js';
 import postSchema from "../schemas/postSchema.js";
@@ -175,16 +181,30 @@ class PostRepository {
 
 
     async patchPost(id, content) {
-        const updatePayload = {
-            ...(content.status !== undefined && { status: content.status }),
-            ...(content.title !== undefined && { title: content.title }),
-            ...(content.description !== undefined && { description: content.description }),
-            ...(content.tag !== undefined && { tag: content.tag }),
-            ...(content.img !== undefined && { img: content.img }),
-        };
-        const post = await postSchema.findOneAndUpdate({ _id: id }, { $set: updatePayload }, { new: true });
-        return post;
+    const updatePayload = {
+        ...(content.status !== undefined && { status: content.status }),
+        ...(content.title !== undefined && { title: content.title }),
+        ...(content.description !== undefined && { description: content.description }),
+        ...(content.tag !== undefined && { tag: content.tag }),
+        ...(content.img !== undefined && { img: content.img }),
+    };
+
+    if (content.img !== undefined) {
+        const oldPost = await postSchema.findById(id).select('img');
+        if (oldPost?.img && oldPost.img !== content.img) {
+            const oldFilename = path.basename(oldPost.img);
+            const oldFilePath = path.join(__dirname, '../../avatar/uploads', oldFilename);
+            fs.unlink(oldFilePath, (err) => {
+                if (err && err.code !== 'ENOENT') {
+                    console.error('Errore cancellazione vecchia immagine:', err.message);
+                }
+            });
+        }
     }
+
+    const post = await postSchema.findOneAndUpdate({ _id: id }, { $set: updatePayload }, { new: true });
+    return post;
+}
 
 }
 
