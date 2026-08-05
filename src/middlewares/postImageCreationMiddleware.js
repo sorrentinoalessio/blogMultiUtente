@@ -25,12 +25,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 export default function postImageCreationMiddleware(req, res, next) {
-  upload.single('uploadedFile')(req, res, function (err) {
+  upload.any()(req, res, function (err) {
     if (err) {
       return next(err);
     }
 
     req.body = req.body ?? {};
+    const uploadedFile = Array.isArray(req.files) ? req.files.find((file) => file.fieldname === 'uploadedFile') : undefined;
 
     if (typeof req.body.tag === 'string') {
       try {
@@ -41,9 +42,9 @@ export default function postImageCreationMiddleware(req, res, next) {
       }
     }
 
-    if (req.file) {
-      req.file.ownerId = req.userId;
-      req.body.img = `/uploads/${req.file.filename}`;
+    if (uploadedFile) {
+      uploadedFile.ownerId = req.userId;
+      req.body.img = `/uploads/${uploadedFile.filename}`;
     }
 
     return next();
