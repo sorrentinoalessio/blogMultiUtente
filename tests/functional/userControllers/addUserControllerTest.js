@@ -442,7 +442,8 @@ describe('Add user controller tests', () => {
                         .patch('/user/profile/update')
                         .set('Authorization', `Bearer ${token}`)
                         .send({
-                            name: "prova"
+                            name: "prova",
+                            timeForHundredMeters: 2
                         });
                     expect(res.status).eq(200);
 
