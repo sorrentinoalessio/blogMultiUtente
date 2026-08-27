@@ -85,12 +85,25 @@ export const userProfile = async (req, res) => {
 }
 export const updateProfile = async (req, res) => {
     try {
-        const profileUpdate = await userProfileUpdate(req.userId, req.body);
+        const levelScore = userNormalizer.getLevel(req.body.timeForHundredMeters);
+
+        const profileUpdate = await userProfileUpdate(
+            req.userId,
+            {
+                ...req.body,
+                levelScore
+            }
+        );
+        
+
+
         res.status(200).json(userNormalizer.get(profileUpdate));
     } catch (err) {
-        res.status(err.status || 500).json({ message: err.message });
+        res.status(err.status || 500).json({
+            message: err.message
+        });
     }
-}
+};
 
 export const newPassword = async (req, res) => {
     const token = req.params.token

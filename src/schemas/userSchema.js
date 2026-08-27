@@ -9,7 +9,9 @@ const userSchema = new mongoose.Schema(
         salt: String,
         status: { type: String, default: userStatus.PENDING},
         registrationToken: String,
-        avatar: String
+        avatar: String,
+        timeForHundredMeters: { type: Number, default: 1 },
+        levelScore: { type: Number, default: 0 }
     },
     { 
         timestamps: true 

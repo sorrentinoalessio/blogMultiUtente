@@ -123,7 +123,7 @@ class UserRepository {
     }
 
     async updateUserProfile(userId, body) {
-        const res = await userSchema.findOneAndUpdate({ _id: userId }, { $set: { name: body.name } }, { new: true }
+        const res = await userSchema.findOneAndUpdate({ _id: userId }, { $set: { name: body.name , timeForHundredMeters: body.timeForHundredMeters, levelScore: body.levelScore } }, { new: true }
         ).catch((err) => {
             if (err.code === 11000) {
                 throw new MongoInternalException(`something went wrong`, 500);
