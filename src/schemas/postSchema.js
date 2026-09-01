@@ -9,7 +9,9 @@ const postSchemas = new mongoose.Schema(
         status: { type: String, default: postStatus.DRAFT },
         creationDate: { type: Date, default: Date.now },
         tag: [{tag:String}],
-        img: String
+        img: String,
+        levelScore: { type: Number, default: 0 },
+        locality: { type: String, default: null },
 
     },
     {

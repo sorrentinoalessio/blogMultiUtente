@@ -11,7 +11,9 @@ const bodyValidator = Joi.object({
     datePost: Joi.date(), // mette data creazione post se non inviato
     tag: Joi.array().items(Joi.string().min(3).max(24)), // tag come array di stringhe
     img: Joi.string(),
-    imagePost: Joi.string()
+    imagePost: Joi.string(),
+    locality: Joi.string().min(3).max(256),
+    levelScore: Joi.number().default(0)
 
 }).unknown(true);
 
