@@ -81,3 +81,7 @@ export const userProfileUpdate = async (userId, body) => {
 }
 
 
+export const userLevelScore = async (userId) => {
+    const profile = await userProfileList(userId);
+    return profile.levelScore;
+}

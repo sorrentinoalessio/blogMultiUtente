@@ -1,11 +1,10 @@
 import postRepo from '../repository/PostRepository.js';
 import TagUtils from '../../src/utils/TagUtils.js'
-import { userLevelScore } from '../controllers/userControllers/userController.js';
+import { userLevelScore } from '../services/userService.js';
 
 
 export const addPost = async (content, userId) => {
-    console.log('addPost', content, userId);
-    
+   
     const levelScore = await userLevelScore(userId);
     const post = {
         ...content,
