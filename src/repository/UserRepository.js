@@ -110,8 +110,9 @@ class UserRepository {
     }
 
 
-    async getUserProfile(userId, status) {
-        const res = await userSchema.findOne({ _id: userId, status: status }).catch(err => {
+    async getUserProfile(userId) {
+
+        const res = await userSchema.findOne({ _id: userId, status: userStatus.ACTIVE }).catch(err => {
             throw new MongoInternalException(`something went wrong: ${err.message}`, err.code);
         })
 
@@ -123,7 +124,7 @@ class UserRepository {
     }
 
     async updateUserProfile(userId, body) {
-        const res = await userSchema.findOneAndUpdate({ _id: userId }, { $set: { name: body.name , timeForHundredMeters: body.timeForHundredMeters, levelScore: body.levelScore } }, { new: true }
+        const res = await userSchema.findOneAndUpdate({ _id: userId }, { $set: { name: body.name, timeForHundredMeters: body.timeForHundredMeters, levelScore: body.levelScore } }, { new: true }
         ).catch((err) => {
             if (err.code === 11000) {
                 throw new MongoInternalException(`something went wrong`, 500);

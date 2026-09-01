@@ -76,7 +76,7 @@ export const resetPassword = async (req, res) => {
 
 export const userProfile = async (req, res) => {
     try {
-        const profile = await userProfileList(req.userId, userStatus.ACTIVE);
+        const profile = await userProfileList(req.userId);
         res.status(200).json(userNormalizer.getUser(profile));
 
     } catch (err) {
@@ -117,3 +117,7 @@ export const newPassword = async (req, res) => {
 }
 
 
+export const userLevelScore = async (userId) => {
+    const profile = await userProfileList(userId);
+    return profile.levelScore;
+}

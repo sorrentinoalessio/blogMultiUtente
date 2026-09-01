@@ -1,12 +1,20 @@
 import postRepo from '../repository/PostRepository.js';
 import TagUtils from '../../src/utils/TagUtils.js'
+import { userLevelScore } from '../controllers/userControllers/userController.js';
 
 
 export const addPost = async (content, userId) => {
-    content.ownerId = userId;
-    return await postRepo.add(content)
-}
+    console.log('addPost', content, userId);
+    
+    const levelScore = await userLevelScore(userId);
+    const post = {
+        ...content,
+        ownerId: userId,
+        levelScore: levelScore
+    };
 
+    return await postRepo.add(post);
+}
 
 export const tagCreate = async (content) => {
     return postRepo.tag(content);
@@ -17,8 +25,8 @@ export const getPostById = async (id, userId) => {
     return postRepo.getTagsByPostId(id, userId);
 }
 
-export const deletePostById = async (id, userId,idTag) => {
-    return postRepo.deleteTagsByPostId(id, userId,idTag);
+export const deletePostById = async (id, userId, idTag) => {
+    return postRepo.deleteTagsByPostId(id, userId, idTag);
 }
 
 export const getPostsById = async (userId) => {
@@ -39,10 +47,10 @@ export const getPostPublic = async (postId) => {
 
 export const getPostUpdate = async (id, content = {}) => {
     if (Array.isArray(content.tag)) {
-            content.tag = await TagUtils.createTagUtils(content.tag)
-        } else if (typeof content.tag === 'string') {
-            content.tag = await TagUtils.createTagUtils([content.tag])
-        }
+        content.tag = await TagUtils.createTagUtils(content.tag)
+    } else if (typeof content.tag === 'string') {
+        content.tag = await TagUtils.createTagUtils([content.tag])
+    }
     return postRepo.patchPost(id, content);
 }
 

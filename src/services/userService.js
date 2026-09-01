@@ -72,8 +72,8 @@ export const addUserNewPassword = async (passwordNew, token) => {
     await userRepo.addResetPassword(password, salt, token);
 }
 
-export const userProfileList = async (userId, status) => {
-    return await userRepo.getUserProfile(userId, status);
+export const userProfileList = async (userId) => {
+    return await userRepo.getUserProfile(userId);
 }
 
 export const userProfileUpdate = async (userId, body) => {
