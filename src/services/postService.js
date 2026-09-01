@@ -4,8 +4,12 @@ import { userLevelScore } from '../services/userService.js';
 
 
 export const addPost = async (content, userId) => {
-   
-    const levelScore = await userLevelScore(userId);
+    let levelScore = content.levelScore;
+
+    if (!levelScore || levelScore <= 0) {
+        levelScore = await userLevelScore(userId);
+    }
+
     const post = {
         ...content,
         ownerId: userId,
