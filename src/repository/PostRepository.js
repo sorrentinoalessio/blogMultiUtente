@@ -11,6 +11,7 @@ import tagSchemas from "../schemas/tagSchema.js";
 import commentSchema from "../schemas/commentSchema.js";
 import likeSchema from "../schemas/likeSchema.js";
 import userSchema from "../schemas/userSchema.js";
+import UserNormalizer from "../normalizer/userNormalizer.js";
 
 
 class PostRepository {
@@ -168,16 +169,30 @@ class PostRepository {
     }
 
     async getPostStatusDetails(postId) {
-        const [post, comments, likes] = await Promise.all([
-            postSchema.findOne({ _id: postId, status: postStatus.PUBLIC }),
-            commentSchema.find({ postId: postId }),
-            likeSchema.findOne({ postId: postId })
-        ]);
-        if (!post) {
-            return null;
-        }
-        return { ...post.toObject(), comments: comments.map(c => c.toObject()), likes: likes ? likes.toObject() : { likes: [], likesCount: 0 } };
-    }
+  const post = await postSchema.findOne({
+    _id: postId,
+    status: postStatus.PUBLIC,
+  });
+
+  if (!post) {
+    return null;
+  }
+
+  const [comments, likes, owner] = await Promise.all([
+    commentSchema.find({ postId }),
+    likeSchema.findOne({ postId }),
+    userSchema.findById(post.ownerId),
+  ]);
+
+  return {
+    ...post.toObject(),
+    user: owner ? UserNormalizer.get(owner) : null,
+    comments: comments.map((comment) => comment.toObject()),
+    likes: likes
+      ? likes.toObject()
+      : { likes: [], likesCount: 0 },
+  };
+}
 
 
     async patchPost(id, content) {
