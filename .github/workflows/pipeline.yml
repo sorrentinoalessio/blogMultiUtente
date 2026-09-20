@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - openWater
   pull_request:
     branches:
-      - main
+      - openWater
 
 jobs:
   build:
@@ -54,9 +54,9 @@ jobs:
             export FRONTEND_URL="${{ secrets.FRONTEND_URL }}"
             export BACKEND_URL="${{ secrets.BACKEND_URL }}"
 
-            cd /var/www/backend
+            cd /var/www/swimigo/backend
 
-            git checkout main
+            git checkout openWater
             git pull
             npm install
 
