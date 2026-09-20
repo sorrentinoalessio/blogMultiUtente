@@ -1,6 +1,5 @@
 import mailer from 'nodemailer';
 import { mailConfig } from '../constants/mailConfig.js';
-import { host, port } from '../../server.js';
 
 const transport = {
     host: 'smtp.gmail.com',
@@ -10,49 +9,51 @@ const transport = {
         user: mailConfig.sender,
         pass: mailConfig.password
     }
-
-
-}
+};
 
 class MailService {
+
     async sendRegistrationMail(user) {
-        const link = `${process.env.BACKEND_URL}/user/${user._id}/confirm/${encodeURIComponent(user.registrationToken)}`;
+        const link = `https://swimigo.it/api/user/${user._id}/confirm/${encodeURIComponent(user.registrationToken)}`;
+
         const mailData = {
-            from: `'Blog service' <${mailConfig.sender}>`,
+            from: `'Swimigo' <${mailConfig.sender}>`,
             to: user.email,
             subject: 'Conferma il tuo indirizzo email',
             text: `Ciao ${user.name}, clicca sul seguente link per confermare il tuo indirizzo email: ${link}`,
             html: ''
-        }
+        };
+
         return await mailer.createTransport(transport).sendMail(mailData);
     }
+
     async sendMailLinkPassRecovery(user) {
-    const link = `${process.env.FRONTEND_URL}/reset-password/${encodeURIComponent(user.registrationToken)}`;
-    const mailData = {
-        from: `'Blog service' <${mailConfig.sender}>`,
-        to: user.email,
-        subject: 'RESET PASSWORD',
-        text: `Ciao ${user.name}, clicca il link per impostare la nuova password, se non sei stato tu a richiederla ignora questa email: ${link}`,
-        html: ''
+        const link = `${process.env.FRONTEND_URL}/reset-password/${encodeURIComponent(user.registrationToken)}`;
+
+        const mailData = {
+            from: `'Swimigo' <${mailConfig.sender}>`,
+            to: user.email,
+            subject: 'Reimposta la password',
+            text: `Ciao ${user.name}, clicca sul seguente link per impostare una nuova password. Se non sei stato tu a richiederla, ignora questa email: ${link}`,
+            html: ''
+        };
+
+        return await mailer.createTransport(transport).sendMail(mailData);
     }
-    return await mailer.createTransport(transport).sendMail(mailData);
-}
-    
 
     async sendMailCommentNotification(postUser, post) {
         const link = `${process.env.FRONTEND_URL}/user/post/${post._id.toString()}`;
+
         const mailData = {
-            from: `'Blog service' <${mailConfig.sender}>`,
+            from: `'Swimigo' <${mailConfig.sender}>`,
             to: postUser.email,
-            subject: 'New comment',
-            text: `Un utente ha commentato un tuo post, con il titolo: ${post.title}, clicca per visualizzare il post ${link}`,
+            subject: 'Nuovo commento al tuo post',
+            text: `Un utente ha commentato il tuo post "${post.title}". Clicca sul seguente link per visualizzarlo: ${link}`,
             html: ''
-        }
+        };
+
         return await mailer.createTransport(transport).sendMail(mailData);
     }
-
-
 }
-
 
 export default new MailService();
