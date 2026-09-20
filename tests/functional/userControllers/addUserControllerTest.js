@@ -148,7 +148,7 @@ describe('Add user controller tests', () => {
             expect(sendMailStub.calledWithMatch({
                 to: userData.email,
                 subject: 'Conferma il tuo indirizzo email',
-                from: sinon.match(values => values.includes('Blog service')),
+                from: sinon.match(values => values.includes('Swimigo')),
                 text: sinon.match(values => values.includes(`Ciao ${userData.name}`))
             }
             )).eq(true);
