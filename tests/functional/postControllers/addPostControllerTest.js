@@ -22,7 +22,9 @@ describe('Add post controller tests', () => {
             const user = await fixturesUtils.createUser({}, true);
             const token = CryptoUtils.generateToken(user, 86400);
             const postData = {
-                description: 'Test Description'
+                description: 'Test Description',
+                eventDate: new Date(),
+                locality: 'https://www.example.com/locality'
             };
             const res = await request.execute(app)
                 .post('/user/post/create')
@@ -36,7 +38,9 @@ describe('Add post controller tests', () => {
             const user = await fixturesUtils.createUser({}, true);
             const token = CryptoUtils.generateToken(user, 86400);
             const postData = {
-                title: 'Test Name'
+                title: 'Test Name',
+                eventDate: new Date(),
+                locality: 'https://www.example.com/locality'
             };
             const res = await request.execute(app)
                 .post('/user/post/create')
@@ -49,8 +53,10 @@ describe('Add post controller tests', () => {
 
         it('Should return 401 if token is not provided', async () => {
             const postData = {
-                name: 'Test Name',
-                description: 'Test Description'
+                title: 'Test Name',
+                description: 'Test Description',
+                eventDate: new Date()
+
             };
 
             const res = await request.execute(app)
@@ -83,7 +89,9 @@ describe('Add post controller tests', () => {
                 title: "nome post",
                 description: "descrizione post",
                 tag: ["cinema"],
-                img: "https://www.example.com/image.jpg"
+                img: "https://www.example.com/image.jpg",
+                eventDate: new Date(),
+                locality: "https://www.example.com/locality"
             }
             const res = await request.execute(app)
                 .post('/user/post/create')
@@ -108,6 +116,8 @@ describe('Add post controller tests', () => {
                 .field('title', 'post con immagine')
                 .field('description', 'descrizione con immagine')
                 .field('tag', JSON.stringify(['cinema']))
+                .field('eventDate', new Date().toISOString())
+                .field('locality', 'https://www.example.com/locality')
                 .attach('uploadedFile', filePath);
 
             expect(res.status).eq(201);
