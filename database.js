@@ -7,7 +7,7 @@ let mongoServer;
 
 export const connect = async () => {
   try {
-    if (process.env.NODE_ENV === 'swimigo') {
+    if (process.env.NODE_ENV === 'test') {
       mongoServer = await MongoMemoryServer.create();
       await mongoose.connect(mongoServer.getUri(), { dbName });
       console.log('Connected to memory server');
