@@ -34,7 +34,7 @@ class SocketFixtures {
     };
     createClient(user) {
         const token = jwtUtils.generateTokens(user);
-        return io("http://localhost:3001/blog", {
+        return io("http://localhost:3001", {
             auth: {
                 accessToken: token.accessToken
             },

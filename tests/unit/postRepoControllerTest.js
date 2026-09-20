@@ -27,7 +27,7 @@ describe('Repo post controller tests', () => {
 
     describe('GET  post by Id fail', () => {
         it('Should return empty array if post not exist', (done) => {
-            const clientSocket = ioClient(`http://localhost:3001/blog`, {
+            const clientSocket = ioClient(`http://localhost:3001`, {
                 auth: { accessToken: token }
             });
 
@@ -53,7 +53,7 @@ describe('Repo post controller tests', () => {
     });
 
     it('Should return error if token is not provided', (done) => {
-        const clientSocket = ioClient(`http://localhost:3001/blog`, {
+        const clientSocket = ioClient(`http://localhost:3001`, {
             auth: {}
         });
 
@@ -76,7 +76,7 @@ describe('Repo post controller tests', () => {
 
     describe('GET post repo success', () => {
         it('Should return list of posts', (done) => {
-            const clientSocket = ioClient(`http://localhost:3001/blog`, {
+            const clientSocket = ioClient(`http://localhost:3001`, {
                 auth: { accessToken: token }
             });
 

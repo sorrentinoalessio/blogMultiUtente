@@ -39,9 +39,7 @@ app.use('/uploads', express.static(uploadsDir));
 
 await connect()
 const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
-  path: '/api/socket.io'
-});
+const io = new Server(httpServer);
 registerRoutes(app);
 new SocketIoInitializer(io);
 app.use((err, req, res, next) => {
