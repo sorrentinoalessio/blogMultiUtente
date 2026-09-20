@@ -121,11 +121,11 @@ describe('Repo post controller tests', () => {
         })
     })
 
-    describe('GET post ,comment and like public ', () => {
+    describe('GET post ,comment and enroll public ', () => {
         it('Should return 201 post', async () => {
             const postData = await fixturesUtils.createPost({ status: postStatus.PUBLIC }, true);
             const comment = await fixturesUtils.createComment({ ownerId: user._id, postId: postData._id }, true);
-            const like = await fixturesUtils.createLikes({ postId: postData._id, likes: [user._id] }, true);
+            const enroll = await fixturesUtils.createLikes({ postId: postData._id, enroll: [user._id] }, true);
             const res = await request.execute(app)
                 .get(`/post/${postData._id}`)
                 .set('Authorization', `Bearer ${token}`)

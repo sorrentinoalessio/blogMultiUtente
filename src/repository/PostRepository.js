@@ -9,7 +9,7 @@ import MongoInternalException from '../exceptions/MongoInternalException.js';
 import postSchema from "../schemas/postSchema.js";
 import tagSchemas from "../schemas/tagSchema.js";
 import commentSchema from "../schemas/commentSchema.js";
-import likeSchema from "../schemas/likeSchema.js";
+import enrollschema from "../schemas/enrollSchema.js";
 import userSchema from "../schemas/userSchema.js";
 import UserNormalizer from "../normalizer/userNormalizer.js";
 
@@ -74,12 +74,12 @@ class PostRepository {
             commentOwners.map((o) => [o._id.toString(), o.name])
         );
 
-        // likes
-        const likesdocs = await likeSchema.find({ postId: { $in: postIds } });
-        const likesMap = new Map(likesdocs.map((l) => [l.postId.toString(), l]));
+        // enroll
+        const enrollsdocs = await enrollschema.find({ postId: { $in: postIds } });
+        const enrollsMap = new Map(enrollsdocs.map((l) => [l.postId.toString(), l]));
 
         return posts.map((item) => {
-            const likeDoc = likesMap.get(item._id.toString());
+            const enrollDoc = enrollsMap.get(item._id.toString());
             return {
                 ...item.toObject(),
                 comments: comments
@@ -88,8 +88,8 @@ class PostRepository {
                         ...c.toObject(),
                         authorName: commentOwnerMap.get(c.ownerId?.toString()) ?? "Utente",
                     })),
-                likes: likeDoc?.likes ?? [],
-                likesCount: likeDoc?.likes?.length ?? 0,
+                enroll: enrollDoc?.enroll ?? [],
+                enrollsCount: enrollDoc?.enroll?.length ?? 0,
             };
         });
     }
@@ -111,8 +111,8 @@ class PostRepository {
             commentOwners.map((o) => [o._id.toString(), o.name])
         );
 
-        // likes
-        const likeDoc = await likeSchema.findOne({ postId: post._id });
+        // enroll
+        const enrollDoc = await enrollschema.findOne({ postId: post._id });
 
         return {
             ...post.toObject(),
@@ -121,8 +121,8 @@ class PostRepository {
                 ...c.toObject(),
                 authorName: commentOwnerMap.get(c.ownerId?.toString()) ?? "Utente",
             })),
-            likes: likeDoc?.likes ?? [],
-            likesCount: likeDoc?.likes?.length ?? 0,
+            enroll: enrollDoc?.enroll ?? [],
+            enrollsCount: enrollDoc?.enroll?.length ?? 0,
         };
     }
 
@@ -146,13 +146,13 @@ class PostRepository {
             commentOwners.map((o) => [o._id.toString(), o.name])
         );
 
-        // likes
-        const likesdocs = await likeSchema.find({ postId: { $in: postIds } });
-        const likesMap = new Map(likesdocs.map((l) => [l.postId.toString(), l]));
+        // enroll
+        const enrollsdocs = await enrollschema.find({ postId: { $in: postIds } });
+        const enrollsMap = new Map(enrollsdocs.map((l) => [l.postId.toString(), l]));
 
         // ← mancava questo
         return posts.map((item) => {
-            const likeDoc = likesMap.get(item._id.toString());
+            const enrollDoc = enrollsMap.get(item._id.toString());
             return {
                 ...item.toObject(),
                 ownerName: ownerMap.get(item.ownerId.toString()) ?? null,
@@ -162,8 +162,8 @@ class PostRepository {
                         ...c.toObject(),
                         authorName: commentOwnerMap.get(c.ownerId?.toString()) ?? "Utente",
                     })),
-                likes: likeDoc?.likes ?? [],
-                likesCount: likeDoc?.likes?.length ?? 0,
+                enroll: enrollDoc?.enroll ?? [],
+                enrollsCount: enrollDoc?.enroll?.length ?? 0,
             };
         });
     }
@@ -178,9 +178,9 @@ class PostRepository {
     return null;
   }
 
-  const [comments, likes, owner] = await Promise.all([
+  const [comments, enroll, owner] = await Promise.all([
     commentSchema.find({ postId }),
-    likeSchema.findOne({ postId }),
+    enrollschema.findOne({ postId }),
     userSchema.findById(post.ownerId),
   ]);
 
@@ -188,9 +188,9 @@ class PostRepository {
     ...post.toObject(),
     user: owner ? UserNormalizer.get(owner) : null,
     comments: comments.map((comment) => comment.toObject()),
-    likes: likes
-      ? likes.toObject()
-      : { likes: [], likesCount: 0 },
+    enroll: enroll
+      ? enroll.toObject()
+      : { enroll: [], enrollsCount: 0 },
   };
 }
 

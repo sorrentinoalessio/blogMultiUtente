@@ -1,5 +1,5 @@
 import MongoInternalException from '../exceptions/MongoInternalException.js';
-import likeSchema from "../schemas/likeSchema.js";
+import enrollschema from "../schemas/enrollSchema.js";
 import mongoose from 'mongoose';
 import postSchema from '../schemas/postSchema.js';
 
@@ -10,16 +10,16 @@ class LikeRepository {
         try {
             const postVerify = await postSchema.exists({ _id: content.postId });
             if (postVerify) {
-                const res = await likeSchema.findOneAndUpdate(
+                const res = await enrollschema.findOneAndUpdate(
                     { postId: content.postId },
                     [
                         {
                             $set: {
-                                likes: {
+                                enroll: {
                                     $cond: [
-                                        { $in: [new mongoose.Types.ObjectId(content.userId), { $ifNull: ["$likes", []] }] },
-                                        { $setDifference: [{ $ifNull: ["$likes", []] }, [new mongoose.Types.ObjectId(content.userId)]] },
-                                        { $setUnion: [{ $ifNull: ["$likes", []] }, [new mongoose.Types.ObjectId(content.userId)]] }
+                                        { $in: [new mongoose.Types.ObjectId(content.userId), { $ifNull: ["$enroll", []] }] },
+                                        { $setDifference: [{ $ifNull: ["$enroll", []] }, [new mongoose.Types.ObjectId(content.userId)]] },
+                                        { $setUnion: [{ $ifNull: ["$enroll", []] }, [new mongoose.Types.ObjectId(content.userId)]] }
                                     ]
                                 }
                             }
@@ -27,7 +27,7 @@ class LikeRepository {
                         {
 
                             $set: {
-                                likesCount: { $size: "$likes" }
+                                enrollsCount: { $size: "$enroll" }
                             }
                         }
                     ],

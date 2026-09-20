@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 
-const likeSchema = new mongoose.Schema(
+const enrollschema = new mongoose.Schema(
     {
         postId: {type: Schema.Types.ObjectId, default: null},
-        likes: { type: [mongoose.Schema.Types.ObjectId], default: [] }
+        enroll: { type: [mongoose.Schema.Types.ObjectId], default: [] }
               
     },
     {
@@ -12,4 +12,4 @@ const likeSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model('like', likeSchema);
+export default mongoose.model('enroll', enrollschema);

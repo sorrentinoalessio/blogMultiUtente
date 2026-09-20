@@ -1,5 +1,5 @@
 import CommentPostAction from "../components/actions/commentPostAction.js";
-import LikePostAction from "../components/actions/likePostAction.js";
+import LikePostAction from "../components/actions/enrollPostAction.js";
 import CommentListPostAction from "../components/actions/commentListPostAction.js";
 import CommentDeletePostAction from "../components/actions/commentDeletePostAction.js";
 import PostListAction from "../components/actions/postListAction.js";

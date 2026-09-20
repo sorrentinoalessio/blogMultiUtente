@@ -1,6 +1,6 @@
 # Blog Multi-Utente API & Real-time
 
-Sistema backend costruito con **Node.js**, **Express**, **MongoDB** e **Socket.io**. Gestisce il ciclo di vita dell'utente, la pubblicazione di contenuti e commenti e like istantanei, con notifica nuovi commenti.
+Sistema backend costruito con **Node.js**, **Express**, **MongoDB** e **Socket.io**. Gestisce il ciclo di vita dell'utente, la pubblicazione di contenuti e commenti e enroll istantanei, con notifica nuovi commenti.
 
 ---
 
@@ -13,7 +13,7 @@ Sistema backend costruito con **Node.js**, **Express**, **MongoDB** e **Socket.i
 
 * **Autenticazione**: Registrazione, Login JWT, conferma account via email e recupero password.
 * **Gestione Post**: CRUD completo con supporto a tag, stati (public, draft, delete, archived) e validazione degli ID.
-* **Real-time engine**: Like e Commenti gestiti tramite classi Action asincrone e WebSockets.
+* **Real-time engine**: enroll e Commenti gestiti tramite classi Action asincrone e WebSockets.
 * **Media Management**: Upload di avatar personalizzati con rinomina univoca.
 * **Validazione Dati**: Protezione totale tramite schemi Joi (Body, Params, Query).
 * **CI/CD Pipeline**: Testing automatico e deploy continuo su AWS tramite GitHub Actions.

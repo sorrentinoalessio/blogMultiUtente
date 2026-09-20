@@ -5,7 +5,7 @@ info:
     Documentazione definitiva sincronizzata con:
     - UserRoutes & PostRoutes (Express)
     - Joi Validators (Body, Params, Query)
-    - Mongoose Schemas (User, Post, Tag, Like, Comment)
+    - Mongoose Schemas (User, Post, Tag, enroll, Comment)
     - Socket.io Real-Time Events
   version: 5.0.0
 
@@ -302,15 +302,15 @@ paths:
         '200': { description: "Tag eliminato" }
 
   # ================= SOCKET EVENTS (Virtual Paths) =================
-  "socket.io: like_post":
+  "socket.io: enroll_post":
     post:
-      summary: "[EVENT] Like/Unlike Post"
+      summary: "[EVENT] enroll/Unenroll Post"
       tags: [Real-Time (WebSockets)]
       requestBody:
         content:
           application/json:
             schema: { type: object, properties: { postId: { type: string } } }
-      responses: { '200': { description: "Evento Like inviato" } }
+      responses: { '200': { description: "Evento enroll inviato" } }
 
   "socket.io: comment_post":
     post:

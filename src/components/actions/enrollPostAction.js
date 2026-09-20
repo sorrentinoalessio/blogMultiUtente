@@ -1,6 +1,6 @@
 import { actions } from "../../constants/const.js";
-import { addLike } from '../../services/likeService.js';
-import likeBodyValidator from "../../validators/actions/likeBodyValidator.js";
+import { addLike } from '../../services/enrollService.js';
+import enrollBodyValidator from "../../validators/actions/enrollBodyValidator.js";
 
 class LikePostAction {
     #socket = null;
@@ -12,14 +12,14 @@ class LikePostAction {
     }
 
     process() {
-          this.#socket.on(actions.LIKE_POST, async (data, ack) => {
+          this.#socket.on(actions.ENROLL_POST, async (data, ack) => {
             try {
-                const dataValidate = likeBodyValidator.validate(data);
-                const likes = await addLike(dataValidate, this.#user.userId);
+                const dataValidate = enrollBodyValidator.validate(data);
+                const enroll = await addLike(dataValidate, this.#user.userId);
                 ack({
                     result: {
                         success: true,
-                        data: likes
+                        data: enroll
                     }
                 })
             }

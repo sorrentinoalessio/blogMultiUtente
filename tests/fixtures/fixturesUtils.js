@@ -6,7 +6,7 @@ import { postStatus, userStatus } from '../../src/constants/const.js';
 import postSchema from '../../src/schemas/postSchema.js';
 import TagUtils from '../../src/utils/TagUtils.js';
 import crypto from 'crypto';
-import likeSchema from '../../src/schemas/likeSchema.js';
+import enrollschema from '../../src/schemas/enrollSchema.js';
 import commentSchema from '../../src/schemas/commentSchema.js';
 
 const objectId = mongoose.Types.ObjectId;
@@ -50,17 +50,17 @@ class FixturesUtils {
     }
 
      async createLikes(data = {}, save = true) {
-        const likes = {
+        const enroll = {
             postId: data.postId,
-            likes: data.likes || []
+            enroll: data.enroll || []
         };
 
         if (save) {
             
-           const res = await likeSchema.create(likes);
+           const res = await enrollschema.create(enroll);
            return res.toObject();
         }
-        return likes;
+        return enroll;
     }
 
 
