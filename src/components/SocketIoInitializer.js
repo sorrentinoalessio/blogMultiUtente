@@ -3,7 +3,6 @@ import socketAuthorizationMiddleware from "../middlewares/socketAuthorizationMid
 
 class SocketIoInitializer {
     constructor(io) {
-        io = io.of('blog');
         io.use(socketAuthorizationMiddleware).use(async (socket, next) => {
             await onConnectionMiddleware.onConnection(socket, io, next);
         });
