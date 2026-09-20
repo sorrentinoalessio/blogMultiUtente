@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-const dbName = 'blog-final-frontEnd'||'blog-final-frontEnd';
+const dbName = 'swimigo';
 const connectionString = process.env.MONGODB_URI || `mongodb://localhost:27017/${dbName}`;
 let mongoServer;
 
 
 export const connect = async () => {
   try {
-    if (process.env.NODE_ENV === 'test') {
+    if (process.env.NODE_ENV === 'swimigo') {
       mongoServer = await MongoMemoryServer.create();
       await mongoose.connect(mongoServer.getUri(), { dbName });
       console.log('Connected to memory server');
