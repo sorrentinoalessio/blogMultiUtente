@@ -80,6 +80,9 @@ class FixturesUtils {
     }
 
     async clearDb() {
+        if (process.env.NODE_ENV !== 'test') {
+            throw new Error('clearDb può essere eseguito solo in ambiente test');
+        }
         await postSchema.deleteMany();
         await userSchema.deleteMany();
     }

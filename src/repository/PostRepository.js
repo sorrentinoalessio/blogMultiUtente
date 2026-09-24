@@ -194,6 +194,14 @@ class PostRepository {
   };
 }
 
+    async updateWeather(postId, weather) {
+        return postSchema.findOneAndUpdate(
+            { _id: postId },
+            { $set: { weather, weatherUpdatedAt: new Date() } },
+            { new: true }
+        ).lean();
+    }
+
 
     async patchPost(id, content) {
     const updatePayload = {

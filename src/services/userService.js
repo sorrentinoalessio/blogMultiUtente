@@ -4,10 +4,14 @@ import userRepo from '../repository/UserRepository.js';
 import cryptoUtils from '../utils/CryptoUtils.js';
 import mailService from './mailService.js';
 import crypto from 'crypto';
+import userNormalizer from '../normalizer/userNormalizer.js';
 
 const users = {};
 
 export const add = async (content) => {
+    if (content.timeForHundredMeters !== undefined && content.timeForHundredMeters !== null) {
+        content.levelScore = userNormalizer.getLevel(content.timeForHundredMeters);
+    }
     const { password, salt } = cryptoUtils.hashPassword(content.password);
     content.password = password;
     content.salt = salt;

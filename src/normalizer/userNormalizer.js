@@ -9,20 +9,26 @@ class UserNormalizer {
   }
 
   getLevel(timeForHundredMeters) {
-  const valore = Number(timeForHundredMeters);
+  const value = String(timeForHundredMeters ?? '').trim();
+  let tempoSecondi;
 
-  if (!Number.isFinite(valore) || valore <= 0) {
-    throw new Error('Tempo non valido');
+  if (value.includes(':')) {
+    const [minutes, seconds] = value.split(':').map(Number);
+    if (!Number.isInteger(minutes) || !Number.isInteger(seconds) || minutes < 0 || seconds < 0 || seconds >= 60) {
+      throw new Error('Tempo non valido');
+    }
+    tempoSecondi = minutes * 60 + seconds;
+  } else {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue) || numericValue <= 0) {
+      throw new Error('Tempo non valido');
+    }
+    tempoSecondi = numericValue > 10
+      ? numericValue
+      : Math.floor(numericValue) * 60 + Math.round((numericValue % 1) * 100);
   }
 
-  const minuti = Math.floor(valore);
-  const secondi = Math.round((valore - minuti) * 100);
-
-  if (secondi >= 60) {
-    throw new Error('Tempo non valido');
-  }
-
-  const tempoSecondi = minuti * 60 + secondi;
+  if (tempoSecondi <= 0) throw new Error('Tempo non valido');
 
   const livello = Math.round(5073 / tempoSecondi);
 
